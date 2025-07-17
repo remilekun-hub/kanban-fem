@@ -1,9 +1,5 @@
 import React from "react";
 
 export default function Dashboard() {
-	return (
-		<div>
-		hello wod
-		</div>
-	);
+	return <div className="text-red-500">hdasjboard</div>;
 }

@@ -23,8 +23,10 @@ import {
 	SidebarFooter,
 	SidebarHeader,
 	SidebarRail,
+	useSidebar,
 } from "@/components/ui/sidebar";
 import { ModeToggle } from "./ui/mode-toggle";
+import Image from "next/image";
 
 // This is sample data.
 const data = {
@@ -158,10 +160,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
-		<Sidebar collapsible="icon" {...props}>
-			<SidebarHeader>
-				<h1>sidebar here</h1>
-			</SidebarHeader>
+		<Sidebar collapsible="offcanvas" {...props} >
 			<SidebarContent>
 				<NavMain items={data.navMain} />
 			</SidebarContent>
