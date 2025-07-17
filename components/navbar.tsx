@@ -8,7 +8,7 @@ import { useSidebar } from "./ui/sidebar";
 export default function Navbar() {
 	const { open } = useSidebar();
 	return (
-		<header className="w-full h-[65px] md:h-[80px] bg-white dark:bg-sidebar flex !items-center !justify-between !px-4 lg:!px-5 sticky top-0">
+		<header className="w-full border-b h-[65px] md:h-[80px] bg-white dark:bg-sidebar flex !items-center !justify-between !px-4 lg:!px-5 sticky top-0">
 			{!open && (
 				<div className="flex flex-row !flex-start items-center gap-[15px] mr-[106px]">
 					<Image

@@ -160,7 +160,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
 		<Sidebar collapsible="offcanvas" {...props}>
-			<SidebarHeader className="flex flex-row !flex-start items-center gap-[15px] h-[80px]">
+			<SidebarHeader className="flex flex-row !flex-start items-center gap-[15px] h-[80px] pl-4 lg:pl-5">
 				<Image
 					width={25}
 					height={25}
