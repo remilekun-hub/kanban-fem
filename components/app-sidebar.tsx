@@ -15,17 +15,16 @@ import {
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
 	SidebarHeader,
 	SidebarRail,
-	useSidebar,
 } from "@/components/ui/sidebar";
 import { ModeToggle } from "./ui/mode-toggle";
+import { Button } from "./ui/button";
+import BoardIcon from "@/app/icons/board-icon";
 import Image from "next/image";
 
 // This is sample data.
@@ -160,14 +159,38 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
-		<Sidebar collapsible="offcanvas" {...props} >
+		<Sidebar collapsible="offcanvas" {...props}>
+			<SidebarHeader className="flex flex-row !flex-start items-center gap-[15px] h-[80px]">
+				<Image
+					width={25}
+					height={25}
+					src={"/kanban-logo.svg"}
+					alt="kanban logo"
+				/>
+				<h1 className="text-black text-[32px] font-[700] dark:text-white">
+					kanban
+				</h1>
+			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
 			</SidebarContent>
+
+			<Button
+				variant={"default"}
+				className="!pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start"
+			>
+				<BoardIcon className="mr-2" /> Platform Launch
+			</Button>
+
+			<Button
+				variant={"default"}
+				className="!pl-6 mr-6 justofy-start !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none hover:cursor-pointer !text-primary !bg-transparent justify-start"
+			>
+				<BoardIcon className="mr-2" />+ Create New Board
+			</Button>
+			<div className="flex flex-row justify-st"></div>
 			<SidebarFooter>
 				<ModeToggle />
-
-				<NavUser user={data.user} />
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>

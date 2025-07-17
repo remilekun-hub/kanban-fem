@@ -1,5 +1,5 @@
-import React from "react";
+import Board from "@/components/board";
 
 export default function Dashboard() {
-	return <div className="text-red-500">hdasjboard</div>;
+	return <Board />;
 }

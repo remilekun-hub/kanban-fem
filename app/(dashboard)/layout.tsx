@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
-import Main from "@/components/main";
+// import Main from "@/components/main";
 import Navbar from "@/components/navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import "@fontsource/plus-jakarta-sans/200.css";
@@ -16,9 +16,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<SidebarProvider>
-			<Main>
+			<AppSidebar />
+			<div className="w-full">
+				<Navbar />
+				
 				{children}
-			</Main>
+			</div>
 		</SidebarProvider>
 	);
 }
