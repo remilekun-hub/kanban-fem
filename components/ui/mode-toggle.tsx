@@ -8,28 +8,16 @@ import Sun from "@/app/icons/sun";
 
 export function ModeToggle() {
 	const { setTheme, theme } = useTheme();
-	const [isChecked, setIsChecked] = React.useState(theme === "dark");
-	console.log({ theme, isChecked });
 
-	React.useEffect(() => {
-		if (theme === "dark") {
-			setIsChecked(true);
-		} else {
-			setIsChecked(false);
-		}
-	}, [theme, setIsChecked]);
+	const isDark = theme === "dark";
 
 	return (
-		<div className="rounded-[6px] flex justify-center items-center py-3 bg-foreground w-full mr-6 gap-6.5">
+		<div className="rounded-[6px] inline-flex justify-center items-center py-3 bg-[#EAF0FB] dark:bg-foreground w-full mr-6.5 gap-6.5">
 			<span className="sr-only">Toggle theme</span>
-
 			<Sun />
 			<Switch
-				key={theme}
-				checked={isChecked}
-				onCheckedChange={() =>
-					setTheme(theme === "dark" ? "light" : "dark")
-				}
+				checked={isDark}
+				onCheckedChange={() => setTheme(isDark ? "light" : "dark")}
 			/>
 			<Moon />
 		</div>
