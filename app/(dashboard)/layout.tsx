@@ -17,7 +17,7 @@ export default function RootLayout({
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<div className="w-full">
+			<div className="w-full overflow-hidden">
 				<Navbar />
 				
 				{children}
