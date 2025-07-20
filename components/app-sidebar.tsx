@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { Suspense } from "react";
 
 import {
 	Sidebar,
@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import BoardIcon from "@/app/icons/board-icon";
 import Image from "next/image";
 import Footer from "./footer";
-
+import BoardLists from "./boardlists";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 	return (
@@ -29,7 +29,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</h1>
 			</SidebarHeader>
 			<SidebarContent>
-			<h2 className="text-muted mb uppercase text-[12px] font-[700] tracking-[2px] pl-5 mt-5 mb-4">ALL BOARDS (0)</h2>
+				
+
+				<Suspense fallback={"Loading board lists"}>
+				
+					<BoardLists />
+				</Suspense>
 				<Button
 					variant={"default"}
 					className="!pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start"

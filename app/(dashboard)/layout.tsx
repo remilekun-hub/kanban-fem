@@ -19,12 +19,10 @@ export default function RootLayout({
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<div className="w-full overflow-hidden">
+			<div className="w-full overflow-hidden min-h-full h-svh">
 				<Navbar />
 
-				{/* <DndContext> */}
-					{children}
-				{/* </DndContext> */}
+				{children}
 			</div>
 		</SidebarProvider>
 	);

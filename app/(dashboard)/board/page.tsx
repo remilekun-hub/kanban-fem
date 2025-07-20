@@ -1,5 +1,9 @@
 import Board from "@/components/board";
 
 export default function Dashboard() {
-	return <Board />;
+	return (
+		<div className="w-full h-full">
+			<Board />
+		</div>
+	);
 }

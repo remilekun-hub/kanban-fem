@@ -3,7 +3,13 @@ import React, { useState } from "react";
 import AddColumn from "./add-column";
 import Column from "./column";
 import { BoardType } from "@/app/types";
-import { DndContext, useSensor, useSensors, PointerSensor, closestCenter } from "@dnd-kit/core";
+import {
+	DndContext,
+	useSensor,
+	useSensors,
+	PointerSensor,
+	closestCenter,
+} from "@dnd-kit/core";
 
 export default function Board() {
 	const boards: BoardType[] = [
@@ -39,13 +45,17 @@ export default function Board() {
 		},
 	];
 
-
 	const [data, setData] = useState(boards);
 	const sensors = useSensors(useSensor(PointerSensor));
 
+	// return (
+	// 	<div className="h-full flex justify-center items-center">
+	// 		<h1>Hello wokd</h1>
+	// 	</div>
+	// );
 
 	return (
-		<div className="w-full h-full flex gap-6 px-4 lg:!px-6 !py-5 overflow-x-scroll scrollbar-hide">
+		<div className="w-full h-svh flex gap-6 px-4 lg:!px-6 !py-5 overflow-x-scroll scrollbar-hide bg-orange-400">
 			<DndContext collisionDetection={closestCenter} sensors={sensors}>
 				{boards[0].columns.map((col, index) => (
 					<Column key={index} {...col} />

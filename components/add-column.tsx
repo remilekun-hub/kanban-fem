@@ -47,17 +47,18 @@ export default function AddColumn() {
 
 	return (
 		<div>
-			<div className="cursor-pointer mt-[29px] flex h-[95%] justify-center items-center bg-foreground dark:bg-[#22232E] rounded-[6px] shrink-0 min-w-[280px]">
-				<button
-					className="text-muted font-[700] text-[24px] leading-[30px] hover:text-primary"
-					onClick={() => setOpen(true)}
-				>
-					+ New Column
-				</button>
+			<div className="flex flex-col justify-center h-[80svh] mt-[32px]">
+				<div className="cursor-pointer flex h-full justify-center items-center bg-foreground dark:bg-[#22232E] rounded-[6px] shrink-0 min-w-[280px]">
+					<button
+						className="text-muted font-[700] text-[24px] leading-[30px] hover:text-primary"
+						onClick={() => setOpen(true)}
+					>
+						+ New Column
+					</button>
+				</div>
 			</div>
 
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogTrigger>Open</DialogTrigger>
 				<DialogContent className="bg-white dark:bg-[#2B2C37]">
 					<DialogHeader>
 						<DialogTitle className="text-black dark:text-white font-[700]">
