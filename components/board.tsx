@@ -11,6 +11,7 @@ import {
 	closestCenter,
 } from "@dnd-kit/core";
 
+
 export default function Board() {
 	const boards: BoardType[] = [
 		{

@@ -1,63 +1,79 @@
 "use client";
-import React, { Suspense, useState } from "react";
-
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarHeader,
-	SidebarRail,
-} from "@/components/ui/sidebar";
+import { addColumnSchema } from "@/lib/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import React, { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "./ui/button";
 import BoardIcon from "@/app/icons/board-icon";
-import Image from "next/image";
-import Footer from "./footer";
-import BoardLists from "./boardlists";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import Createboard from "./create-board";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "./ui/form";
+import { Input } from "./ui/input";
+import { XIcon } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { createBoard } from "../lib/features/boardSlice";
+import { RootState } from "@/lib/features/store";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export default function Createboard() {
+	const boardState = useSelector((state: RootState) => state.board);
+	const dispatch = useDispatch();
+	console.log({ boardState });
+
 	const [open, setOpen] = useState(false);
+	const form = useForm<z.infer<typeof addColumnSchema>>({
+		resolver: zodResolver(addColumnSchema),
+		defaultValues: {
+			boardName: "",
+			columnNames: [],
+		},
+		mode: "all",
+	});
+
+	const { fields, append, remove } = useFieldArray({
+		control: form.control,
+		name: "columnNames",
+	});
+
+	const onSubmit = (data: z.infer<typeof addColumnSchema>) => {
+		alert("submitted");
+		console.log({ data });
+
+		const columnNames = data.columnNames.map((col) => {
+			return { columnName: col.name, id: "k" };
+		});
+		dispatch(
+			createBoard({
+				id: "1",
+				boardName: data.boardName,
+				columns: columnNames,
+			})
+		);
+	};
 	return (
-		<Sidebar collapsible="offcanvas" {...props}>
-			<SidebarHeader className="flex flex-row !flex-start items-center gap-[15px] h-[80px] pl-5">
-				<Image
-					width={25}
-					height={25}
-					src={"/kanban-logo.svg"}
-					alt="kanban logo"
-				/>
-				<h1 className="text-black text-[32px] font-[700] dark:text-white">
-					kanban
-				</h1>
-			</SidebarHeader>
-			<SidebarContent>
-				<Suspense fallback={"Loading board lists"}>
-					<BoardLists />
-				</Suspense>
-				<Button
-					variant={"default"}
-					className="!pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start"
-				>
-					<BoardIcon className="mr-2" /> Platform Launch
-				</Button>
+		<div>
+			<Button
+				variant={"default"}
+				className="!pl-6 mr-6 justofy-start !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none hover:cursor-pointer !text-primary !bg-transparent justify-start"
+				onClick={() => setOpen(true)}
+			>
+				<BoardIcon className="mr-2" />+ Create New Board
+			</Button>
 
-				<Createboard />
-				{/* n
-				<NavMain items={data.navMain} />
-				jsdf */}
-			</SidebarContent>
-
-			<Footer />
-
-			<SidebarRail />
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogContent className="bg-white dark:bg-[#2B2C37]">
 					<DialogHeader>
 						<DialogTitle className="text-black dark:text-white font-[700]">
-							Edit board
+							Add New Board
 						</DialogTitle>
 					</DialogHeader>
-					{/* <Form {...form}>
+					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)}>
 							<FormField
 								control={form.control}
@@ -131,14 +147,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									className="font-[700] h-[42px] text-[13px] cursor-pointer"
 									type="submit"
 								>
-									Save Changes
+									Create New Board
 								</Button>
 							</div>
 						</form>
-					</Form> */}
-					<h1>Add board</h1>
+					</Form>
 				</DialogContent>
 			</Dialog>
-		</Sidebar>
+		</div>
 	);
 }

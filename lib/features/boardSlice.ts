@@ -3,17 +3,31 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { BoardType } from "../../app/types";
 
-// export interface BoardState {
-//   value: number
-// }
+export interface BoardState {
+	boards: BoardType[];
+}
 
-const initialState: BoardType[] = [];
+const initialState: BoardState = {
+	boards: [],
+};
 
 export const boardSlice = createSlice({
-	name: "board",
+	name: "boards",
 	initialState,
 	reducers: {
-		increment: (state) => {
+		createBoard: (state, action: PayloadAction<BoardType>) => {
+			const {
+				payload: { id, boardName, columns },
+			} = action;
+
+			const newBoard = {
+				id,
+				boardName,
+				columns: [...columns],
+			};
+
+			state.boards = [...state.boards, newBoard];
+			// [...state]
 			// Redux Toolkit allows us to write "mutating" logic in reducers. It
 			// doesn't actually mutate the state because it uses the Immer library,
 			// which detects changes to a "draft state" and produces a brand new
@@ -30,6 +44,6 @@ export const boardSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = boardSlice.actions;
+export const { createBoard, decrement, incrementByAmount } = boardSlice.actions;
 
 export default boardSlice.reducer;
