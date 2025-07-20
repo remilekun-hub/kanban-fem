@@ -7,7 +7,7 @@ export default function Task({
 	taskName,
 	description,
 	id,
-	subtasks,
+	// subtasks,
 }: TaskType) {
 	const { attributes, listeners, setNodeRef, transform,  } = useDraggable({
 		id: id,
@@ -19,7 +19,7 @@ export default function Task({
 		  }
 		: undefined;
 
-	const totalSubTasks = subtasks.length;
+	// const totalSubTasks = subtasks.length;
 	return (
 		<div
 			ref={setNodeRef}
@@ -33,7 +33,8 @@ export default function Task({
 				{taskName}
 			</h3>
 			<p className="text-muted text-[12px] font-[700] leading-[15px]">
-				1 of {totalSubTasks} subtasks
+				{/* 1 of {totalSubTasks} subtasks */}
+				1 of 3 subtasks
 			</p>
 		</div>
 	);

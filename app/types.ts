@@ -5,13 +5,13 @@ export type BoardType = {
 };
 export type ColumnType = {
 	id: string;
-	columnName: string;
+	name: string;
 	tasks?: TaskType[];
 };
 export type TaskType = {
 	id: string;
 	taskName: string;
-	subtasks: [];
+	// subtasks?: [];
 	description: string;
 };
 

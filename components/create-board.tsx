@@ -24,8 +24,6 @@ import { RootState } from "@/lib/features/store";
 export default function Createboard() {
 	const boardState = useSelector((state: RootState) => state.board);
 	const dispatch = useDispatch();
-	console.log({ boardState });
-
 	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof addColumnSchema>>({
 		resolver: zodResolver(addColumnSchema),
@@ -43,10 +41,9 @@ export default function Createboard() {
 
 	const onSubmit = (data: z.infer<typeof addColumnSchema>) => {
 		alert("submitted");
-		console.log({ data });
 
 		const columnNames = data.columnNames.map((col) => {
-			return { columnName: col.name, id: "k" };
+			return { name: col.name, id: "k" };
 		});
 		dispatch(
 			createBoard({

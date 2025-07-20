@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import AddColumn from "./add-column";
 import Column from "./column";
-import { BoardType } from "@/app/types";
+import { TaskType } from "@/app/types";
 import {
 	DndContext,
 	useSensor,
@@ -10,43 +10,47 @@ import {
 	PointerSensor,
 	closestCenter,
 } from "@dnd-kit/core";
-
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/features/store";
+import { moveTask } from "../lib/features/boardSlice";
 
 export default function Board() {
-	const boards: BoardType[] = [
-		{
-			id: "1233",
-			boardName: "Board one",
-			columns: [
-				{
-					id: "1290",
-					columnName: "Test This",
-					tasks: [
-						{
-							id: "xx1231",
-							taskName: "do this",
-							subtasks: [],
-							description: "yes we iljj",
-						},
-					],
-				},
-				{
-					id: "xu12",
-					columnName: "Test Again",
-					tasks: [
-						{
-							id: "xx991",
-							taskName: "done",
-							subtasks: [],
-							description: "yes we iljj",
-						},
-					],
-				},
-			],
-		},
-	];
+	const dispatch = useDispatch();
+	const boardState = useSelector((state: RootState) => state.board);
+	console.log({boardState})
+	// const boards: BoardType[] = [
+	// 	{
+	// 		id: "1233",
+	// 		boardName: "Board one",
+	// 		columns: [
+	// 			{
+	// 				id: "1290",
+	// 				name: "Test This",
+	// 				tasks: [
+	// 					{
+	// 						id: "xx1231",
+	// 						taskName: "do this",
+	// 						subtasks: [],
+	// 						description: "yes we iljj",
+	// 					},
+	// 				],
+	// 			},
+	// 			{
+	// 				id: "xu12",
+	// 				name: "Test Again",
+	// 				tasks: [
+	// 					{
+	// 						id: "xx991",
+	// 						taskName: "done",
+	// 						subtasks: [],
+	// 						description: "yes we iljj",
+	// 					},
+	// 				],
+	// 			},
+	// 		],
+	// 	},
+	// ];
 
-	const [data, setData] = useState(boards);
 	const sensors = useSensors(useSensor(PointerSensor));
 
 	// return (
@@ -54,11 +58,59 @@ export default function Board() {
 	// 		<h1>Hello wokd</h1>
 	// 	</div>
 	// );
+	type Active = {
+		id: string | number; // Unique ID of the dragged item
+		data?: {
+			current?: any; // Optional: any extra data attached to the draggable item
+		};
+		rect?: any; // Optional: bounding box info
+	};
+
+	type Over = {
+		id: string | number;
+		data?: {
+			current?: any;
+		};
+		rect?: any;
+	} | null;
+
+	const findColumnIdContainingTask = (
+		activeTaskId: string
+	): string | number | undefined => {
+		const column = boardState?.columns?.find((col) =>
+			col.tasks?.some((task) => task.id === activeTaskId)
+		);
+
+		return column?.id;
+	};
+
+	const handleDragEnd = ({
+		active,
+		over,
+	}: {
+		active: Active;
+		over: Over;
+	}) => {
+		if (!over) return;
+
+		const activeTaskId = active.id as string;
+
+		const sourceColumnId = findColumnIdContainingTask(
+			activeTaskId
+		) as string;
+		const targetColumnId = over.id as string;
+
+		dispatch(moveTask({ activeTaskId, sourceColumnId, targetColumnId }));
+	};
 
 	return (
 		<div className="w-full h-svh flex gap-6 px-4 lg:!px-6 !py-5 overflow-x-scroll scrollbar-hide bg-orange-400">
-			<DndContext collisionDetection={closestCenter} sensors={sensors}>
-				{boards[0].columns.map((col, index) => (
+			<DndContext
+				collisionDetection={closestCenter}
+				sensors={sensors}
+				onDragEnd={handleDragEnd}
+			>
+				{boardState.columns?.map((col, index) => (
 					<Column key={index} {...col} />
 				))}
 			</DndContext>

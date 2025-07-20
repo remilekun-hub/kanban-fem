@@ -31,9 +31,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</h1>
 			</SidebarHeader>
 			<SidebarContent>
-				<Suspense fallback={"Loading board lists"}>
+				{/* <Suspense fallback={"Loading board lists"}>
 					<BoardLists />
-				</Suspense>
+				</Suspense> */}
 				<Button
 					variant={"default"}
 					className="!pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start"
