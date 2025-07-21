@@ -22,7 +22,6 @@ import { createBoard } from "../lib/features/boardSlice";
 import { RootState } from "@/lib/features/store";
 
 export default function Createboard() {
-	const boardState = useSelector((state: RootState) => state.board);
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof addColumnSchema>>({
@@ -63,8 +62,8 @@ export default function Createboard() {
 				<BoardIcon className="mr-2" />+ Create New Board
 			</Button>
 
-			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent className="bg-white dark:bg-[#2B2C37]">
+			<Dialog open={open} onOpenChange={setOpen} >
+				<DialogContent className="bg-white dark:bg-[#2B2C37]" showCloseButton={false}>
 					<DialogHeader>
 						<DialogTitle className="text-black dark:text-white font-[700]">
 							Add New Board

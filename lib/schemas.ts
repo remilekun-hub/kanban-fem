@@ -6,5 +6,6 @@ export const addColumnSchema = z.object({
 		z.object({
 			name: z.string().min(1, "required"),
 		})
-	)
+	),
+	id: z.string().min(1, "required"),
 });

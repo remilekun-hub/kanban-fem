@@ -52,7 +52,7 @@ body {
 }
 
 :root {
-	--radius: 0.625rem;
+	--radius: 0.625rem;  
 	--background: #f4f7fd;
 	--foreground: #eaf0fb;
 	--card: oklch(1 0 0);

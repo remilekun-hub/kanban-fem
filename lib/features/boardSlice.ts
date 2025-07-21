@@ -3,10 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { BoardType, TaskType } from "../../app/types";
 
-// export interface BoardState {
-// 	board: BoardType;
-// }
-
 const initialState: BoardType = {
 	boardName: "sjbf",
 	columns: [
@@ -20,7 +16,6 @@ const initialState: BoardType = {
 			name: "whfj",
 			tasks: [{ id: "efjkj", taskName: "jenf", description: "jkefj" }],
 		},
-
 	],
 	id: "jsvdj",
 };
@@ -106,6 +101,7 @@ export const boardSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { createBoard, decrement, incrementByAmount, moveTask } = boardSlice.actions;
+export const { createBoard, decrement, incrementByAmount, moveTask } =
+	boardSlice.actions;
 
 export default boardSlice.reducer;

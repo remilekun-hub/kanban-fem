@@ -1,11 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -22,15 +21,18 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { XIcon } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/features/store";
 
 export default function AddColumn() {
 	const [open, setOpen] = useState(false);
-
+	const board = useSelector((state: RootState) => state.board);
 	const form = useForm<z.infer<typeof addColumnSchema>>({
 		resolver: zodResolver(addColumnSchema),
 		defaultValues: {
 			boardName: "",
 			columnNames: [],
+			id: "",
 		},
 		mode: "all",
 	});
@@ -45,9 +47,19 @@ export default function AddColumn() {
 		console.log({ data });
 	};
 
+	useEffect(() => {
+		if (Object.values(board)[0].length) {
+			form.reset({
+				boardName: board.boardName,
+				columnNames: [...board.columns],
+				id: board.id,
+			});
+		}
+	}, [form]);
+
 	return (
 		<div>
-			<div className="flex flex-col justify-center h-[80svh] mt-[32px]">
+			<div className="flex flex-col justify-center h-[85svh]">
 				<div className="cursor-pointer flex h-full justify-center items-center bg-foreground dark:bg-[#22232E] rounded-[6px] shrink-0 min-w-[280px]">
 					<button
 						className="text-muted font-[700] text-[24px] leading-[30px] hover:text-primary"
@@ -59,7 +71,10 @@ export default function AddColumn() {
 			</div>
 
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent className="bg-white dark:bg-[#2B2C37]">
+				<DialogContent
+					className="bg-white dark:bg-[#2B2C37]"
+					// showCloseButton={false}
+				>
 					<DialogHeader>
 						<DialogTitle className="text-black dark:text-white font-[700]">
 							Edit board
@@ -144,6 +159,8 @@ export default function AddColumn() {
 							</div>
 						</form>
 					</Form>
+
+					{/* <AddColForm /> */}
 				</DialogContent>
 			</Dialog>
 		</div>

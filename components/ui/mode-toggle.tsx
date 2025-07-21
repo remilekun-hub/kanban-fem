@@ -1,21 +1,31 @@
 "use client";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { Switch } from "@/components/ui/switch";
 import Moon from "@/app/icons/moon";
 import Sun from "@/app/icons/sun";
+import Switch2 from "./switch-2";
 
 export function ModeToggle() {
 	const { setTheme, theme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) {
+		// Avoid hydration mismatch
+		return null;
+	}
 
 	const isDark = theme === "dark";
 
 	return (
-		<div className="rounded-[6px] inline-flex justify-center items-center py-3 bg-[#EAF0FB] dark:bg-foreground w-full mr-6.5 gap-6.5">
+		<div className="mb-5 rounded-[6px] w-[85%] mx-auto flex justify-center items-center py-2.5 bg-[#EAF0FB] dark:bg-foreground  gap-6.5">
 			<span className="sr-only">Toggle theme</span>
 			<Sun />
-			<Switch
+
+			<Switch2
 				checked={isDark}
 				onCheckedChange={() => setTheme(isDark ? "light" : "dark")}
 			/>
