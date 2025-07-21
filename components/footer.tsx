@@ -12,11 +12,11 @@ export default function Footer() {
 			<ModeToggle />
 			<Button
 				variant={"default"}
-				className="cursor-pointer !pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start bg-white text-muted hover:text-primary hover:bg-foreground dark:text-primary dark:hover:bg-white"
+				className="cursor-pointer !bg-white hover:!bg-white mb-7 !pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start text-muted hover:text-primary dark:text-muted dark:hover:!bg-white dark:!bg-[#2B2C37]"
 				type="button"
 				onClick={() => setOpen(false)}
 			>
-				<EyeOff className="text-[#828FA3]" /> Hide Sidebar
+				<EyeOff className="text-[#828FA3] ml-1.5" /> Hide Sidebar
 			</Button>
 		</SidebarFooter>
 	);

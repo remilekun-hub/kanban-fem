@@ -59,7 +59,7 @@ export default function AddColumn() {
 
 	return (
 		<div>
-			<div className="flex flex-col justify-center h-[85svh]">
+			<div className="flex flex-col justify-center h-full mt-[31px] max-h-[calc(100svh-150px)] lg:max-h-[calc(100svh-170px)]">
 				<div className="cursor-pointer flex h-full justify-center items-center bg-foreground dark:bg-[#22232E] rounded-[6px] shrink-0 min-w-[280px]">
 					<button
 						className="text-muted font-[700] text-[24px] leading-[30px] hover:text-primary"

@@ -136,7 +136,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</div>
 						</form>
 					</Form> */}
-					<h1>Add board</h1>
+				
 				</DialogContent>
 			</Dialog>
 		</Sidebar>
