@@ -17,7 +17,6 @@ import { moveTask } from "../lib/features/boardSlice";
 export default function Board() {
 	const dispatch = useDispatch();
 	const boardState = useSelector((state: RootState) => state.board);
-	console.log({boardState})
 	// const boards: BoardType[] = [
 	// 	{
 	// 		id: "1233",
@@ -51,7 +50,15 @@ export default function Board() {
 	// 	},
 	// ];
 
-	const sensors = useSensors(useSensor(PointerSensor));
+	// const sensors = useSensors(useSensor(PointerSensor));
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 8,
+			},
+		})
+	)
 
 	// return (
 	// 	<div className="h-full flex justify-center items-center">
@@ -104,7 +111,7 @@ export default function Board() {
 	};
 
 	return (
-		<div className="w-full h-svh flex gap-6 px-4 lg:!px-6 !py-5 overflow-x-scroll scrollbar-hide bg-orange-400">
+		<div className="w-full h-svh flex gap-6 px-4 lg:!px-6 !py-5 overflow-x-scroll scrollbar-hide">
 			<DndContext
 				collisionDetection={closestCenter}
 				sensors={sensors}

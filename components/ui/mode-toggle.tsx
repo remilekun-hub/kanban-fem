@@ -21,7 +21,7 @@ export function ModeToggle() {
 	const isDark = theme === "dark";
 
 	return (
-		<div className="mb-5 rounded-[6px] w-[85%] mx-auto flex justify-center items-center py-2.5 bg-[#EAF0FB] dark:bg-foreground  gap-6.5">
+		<div className="mb-5 rounded-[6px] w-[85%] mx-auto flex justify-center items-center py-[12px] bg-[#EAF0FB] dark:bg-foreground  gap-6.5">
 			<span className="sr-only">Toggle theme</span>
 			<Sun />
 
