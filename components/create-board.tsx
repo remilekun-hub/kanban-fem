@@ -1,5 +1,5 @@
 "use client";
-import { addColumnSchema } from "@/lib/schemas";
+import { addColumnSchema, createBoardSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -17,18 +17,28 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { XIcon } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createBoard } from "../lib/features/boardSlice";
-import { RootState } from "@/lib/features/store";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Createboard() {
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
-	const form = useForm<z.infer<typeof addColumnSchema>>({
-		resolver: zodResolver(addColumnSchema),
+	const form = useForm<z.infer<typeof createBoardSchema>>({
+		resolver: zodResolver(createBoardSchema),
 		defaultValues: {
-			boardName: "",
-			columnNames: [],
+			id: uuidv4(),
+			name: "",
+			columnNames: [
+				{
+					name: "Todo",
+					id: uuidv4(),
+				},
+				{
+					name: "Doing",
+					id: uuidv4(),
+				},
+			],
 		},
 		mode: "all",
 	});
@@ -38,20 +48,21 @@ export default function Createboard() {
 		name: "columnNames",
 	});
 
-	const onSubmit = (data: z.infer<typeof addColumnSchema>) => {
-		alert("submitted");
-
+	const onSubmit = (data: z.infer<typeof createBoardSchema>) => {
+		
 		const columnNames = data.columnNames.map((col) => {
-			return { name: col.name, id: "k" };
+			return { name: col.name, id: col.id };
 		});
+
 		dispatch(
 			createBoard({
-				id: "1",
-				boardName: data.boardName,
-				columns: columnNames,
+				id: uuidv4(),
+				boardName: data.name,
+				columns: [...columnNames],
 			})
 		);
 	};
+
 	return (
 		<div>
 			<Button
@@ -62,8 +73,11 @@ export default function Createboard() {
 				<BoardIcon className="mr-2" />+ Create New Board
 			</Button>
 
-			<Dialog open={open} onOpenChange={setOpen} >
-				<DialogContent className="bg-white dark:bg-[#2B2C37]" showCloseButton={false}>
+			<Dialog open={open} onOpenChange={setOpen}>
+				<DialogContent
+					className="bg-white dark:bg-[#2B2C37]"
+					showCloseButton={false}
+				>
 					<DialogHeader>
 						<DialogTitle className="text-black dark:text-white font-[700]">
 							Add New Board
@@ -73,7 +87,7 @@ export default function Createboard() {
 						<form onSubmit={form.handleSubmit(onSubmit)}>
 							<FormField
 								control={form.control}
-								name={"boardName"}
+								name={"name"}
 								render={({ field }) => (
 									<FormItem className="mb-7">
 										<FormLabel className="font-[700] text-[12px] text-muted dark:text-white">
@@ -82,7 +96,7 @@ export default function Createboard() {
 										<FormControl>
 											<Input
 												placeholder="e.g Web design"
-												className="text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
+												className="relative text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] !text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
 												{...field}
 											/>
 										</FormControl>
@@ -105,8 +119,7 @@ export default function Createboard() {
 												<FormControl>
 													<div className="flex items-center gap-3">
 														<Input
-															// placeholder="Column name"
-															className="text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
+															className="text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] !text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
 															{...field}
 														/>
 
@@ -135,7 +148,9 @@ export default function Createboard() {
 								<Button
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 									type="button"
-									onClick={() => append({ name: "" })}
+									onClick={() =>
+										append({ name: "", id: uuidv4() })
+									}
 								>
 									+ Add New Column
 								</Button>
