@@ -45,6 +45,7 @@ import {
 	FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import AddTask from "./add-task";
 
 export default function Navbar() {
 	const { open } = useSidebar();
@@ -102,19 +103,7 @@ export default function Navbar() {
 					Board NAME
 				</h1>
 				<div className="flex items-center">
-					<Button
-						variant={"default"}
-						className="flex md:hidden !px-4 mr-4 font-[700] text-[15px] leading-[19px] rounded-[24px] h-[30px] justify-center items-center"
-					>
-						<PlusIcon strokeWidth={4} />
-					</Button>
-
-					<Button
-						variant={"default"}
-						className="hidden md:flex !px-6 !py-6 mr-4 font-[700] text-[15px] leading-[19px]"
-					>
-						+ Add New Task
-					</Button>
+					<AddTask />
 
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
@@ -161,7 +150,7 @@ export default function Navbar() {
 						<AlertDialogFooter className="w-full flex flex-col gap-4 items-stretch md:flex-row sm:justify-start mt-2 mb-2">
 							<Button
 								variant={"destructive"}
-								className="flex-1 bg-[#ea5555] cursor-pointer hover:bg-[#FF9898] text-[13px] font-[700] leading-[23px] h-[42px] text-[13px]"
+								className="flex-1 bg-[#ea5555] cursor-pointer hover:bg-[#FF9898] font-[700] leading-[23px] h-[42px] text-[13px]"
 							>
 								Delete
 							</Button>

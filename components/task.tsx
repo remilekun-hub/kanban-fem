@@ -218,9 +218,9 @@ export default function Task({
 							Delete this board?
 						</AlertDialogTitle>
 						<AlertDialogDescription className="font-[500] text-[13px] leading-[23px] text-muted">
-							`Are you sure you want to delete the "{taskName}"
+							Are you sure you want to delete the "{taskName}"
 							task and its subtasks? This action cannot be
-							reversed.`
+							reversed.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter className="w-full flex flex-col gap-4 items-stretch md:flex-row sm:justify-start mt-2 mb-2">
