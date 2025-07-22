@@ -15,13 +15,28 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import Subtasksitem from "./subtasksitem";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "./ui/button";
+import { useDispatch } from "react-redux";
+import { deleteTask } from "@/lib/features/boardSlice";
 
 export default function Task({
 	taskName,
 	description,
 	id,
-}: // subtasks,
-TaskType) {
+	subtasks,
+}: TaskType) {
 	const [openSubTasks, setOpenSubTasks] = useState(false);
 	const { attributes, listeners, setNodeRef, transform } = useDraggable({
 		id: id,
@@ -32,7 +47,10 @@ TaskType) {
 		  }
 		: undefined;
 
-	// const totalSubTasks = subtasks.length;
+	const totalSubTasks = subtasks?.length;
+	const completedSubTasks = subtasks?.filter((s) => s.completed === true);
+	const [confirmDelete, setConfirmDelete] = useState(false);
+	const dispatch = useDispatch()
 
 	return (
 		<div>
@@ -51,7 +69,9 @@ TaskType) {
 					{taskName}
 				</h3>
 				<p className="text-muted text-[12px] font-[700] leading-[15px]">
-					{/* 1 of {totalSubTasks} subtasks */}1 of 3 subtasks
+					{totalSubTasks
+						? `${completedSubTasks?.length} of ${totalSubTasks} subtasks `
+						: "0 subtasks"}
 				</p>
 			</div>
 
@@ -63,8 +83,9 @@ TaskType) {
 				>
 					<DialogHeader className="flex flex-row justify-between items-center">
 						<DialogTitle className="text-black dark:text-white font-[700]">
-							{description}
+							{taskName}
 						</DialogTitle>
+
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<button className="outline-none ring-0 focus-within:ring-0">
@@ -83,15 +104,31 @@ TaskType) {
 								<DropdownMenuItem className="hover:!bg-none cursor-pointer py-2.5 focus:!bg-white">
 									<button
 										className="w-full text-start text-[13px] font-[500] text-[#ea5555] cursor-pointer"
-										// onClick={() => setConfirmDelete(true)}
+										onClick={() => {
+											setOpenSubTasks(false);
+											setConfirmDelete(true);
+										}}
 									>
 										Delete Task
 									</button>
 								</DropdownMenuItem>
-								
 							</DropdownMenuContent>
 						</DropdownMenu>
 					</DialogHeader>
+					<p className="text-muted font-[500] text-[13px] leading-[23px] mt-1.5">
+						{description}
+					</p>
+
+					<p className="text-muted text-[12px] font-[700] leading-[15px] tracking-[2.4px]">
+						Subtasks ({completedSubTasks?.length} of {totalSubTasks}{" "}
+						)
+					</p>
+
+					<div className="flex flex-col gap-2">
+						{subtasks?.map((s, index) => (
+							<Subtasksitem key={index} {...s} />
+						))}
+					</div>
 					{/* <Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)}>
 							<FormField
@@ -173,6 +210,37 @@ TaskType) {
 					</Form> */}
 				</DialogContent>
 			</Dialog>
+
+			<AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+				<AlertDialogContent className="bg-white dark:bg-background">
+					<AlertDialogHeader>
+						<AlertDialogTitle className="text-[#ea5555] font-[700] text-[18px] mb-4">
+							Delete this board?
+						</AlertDialogTitle>
+						<AlertDialogDescription className="font-[500] text-[13px] leading-[23px] text-muted">
+							`Are you sure you want to delete the "{taskName}"
+							task and its subtasks? This action cannot be
+							reversed.`
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter className="w-full flex flex-col gap-4 items-stretch md:flex-row sm:justify-start mt-2 mb-2">
+						<Button
+							variant={"destructive"}
+							className="flex-1 bg-[#ea5555] cursor-pointer hover:bg-[#FF9898] text-[13px] font-[700] leading-[23px] h-[42px] text-[13px]"
+							onClick={()=> dispatch(deleteTask({id}))}
+						>
+							Delete
+						</Button>
+						<Button
+							variant={"default"}
+							className="flex-1 h-[42px] cursor-pointer bg-[#635FC719] hover:bg-[#635fc740] dark:bg-white dark:hover:bg-white !text-primary font-[700] text-[13px]"
+							onClick={() => setConfirmDelete(false)}
+						>
+							Cancel
+						</Button>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</div>
 	);
 }

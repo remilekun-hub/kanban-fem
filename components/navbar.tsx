@@ -50,6 +50,7 @@ export default function Navbar() {
 	const { open } = useSidebar();
 	const [confirmDelete, setConfirmDelete] = useState(false);
 	const board = useSelector((state: RootState) => state.board);
+	console.log({ board });
 	const [editBoard, setEditBoard] = useState(false);
 	const form = useForm<z.infer<typeof addColumnSchema>>({
 		resolver: zodResolver(addColumnSchema),
@@ -123,7 +124,10 @@ export default function Navbar() {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="w-10 mr-16 mt-4 !bg-white dark:bg-background shadow-[0_10px_20px_rgba(54, 78, 126, .25)]">
 							<DropdownMenuItem className="hover:!bg-none cursor-pointer py-2.5 focus:!bg-white">
-								<button className="w-full text-start text-[13px] font-[500] text-muted cursor-pointer" 		onClick={() => setEditBoard(true)}>
+								<button
+									className="w-full text-start text-[13px] font-[500] text-muted cursor-pointer"
+									onClick={() => setEditBoard(true)}
+								>
 									Edit board
 								</button>
 							</DropdownMenuItem>
@@ -265,8 +269,6 @@ export default function Navbar() {
 								</div>
 							</form>
 						</Form>
-
-						
 					</DialogContent>
 				</Dialog>
 			</div>

@@ -11,7 +11,7 @@ export type ColumnType = {
 export type TaskType = {
 	id: string;
 	taskName: string;
-	// subtasks?: [];
+	subtasks?: SubTaskType[];
 	description: string;
 };
 
@@ -19,4 +19,11 @@ export type BoardLinkType = {
 	id: string;
 	boardName: string;
 	isActive: boolean;
+};
+
+export type SubTaskType = {
+	id: string;
+	completed: boolean;
+	title:string;
+	column: string
 };

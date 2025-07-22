@@ -9,21 +9,53 @@ const initialState: BoardType = {
 		{
 			id: "f",
 			name: "whf",
-			tasks: [{ id: "ef", taskName: "jef", description: "jkefj" }],
+			tasks: [
+				{
+					id: "ef",
+					taskName: "jef",
+					description: "jkefj",
+					subtasks: [
+						{
+							id: "ww",
+							title: "hekkgv",
+							completed: true,
+							column: "",
+						},
+						{
+							id: "ww2",
+							title: "hekk",
+							completed: false,
+							column: "",
+						},
+					],
+				},
+			],
 		},
 		{
 			id: "fj",
 			name: "whfj",
-			tasks: [{ id: "efjkj", taskName: "jenf", description: "jkefj" }],
+			tasks: [
+				{
+					id: "efjkj",
+					taskName: "jenf",
+					description: "jkefj",
+					subtasks: [],
+				},
+			],
 		},
 	],
 	id: "jsvdj",
 };
 
-type moveTaskType = {
+type moveTaskPayloadType = {
 	activeTaskId: string;
 	sourceColumnId: string;
 	targetColumnId: string;
+};
+
+type updateSubTaskPayloadType = {
+	id: string;
+	status: boolean;
 };
 
 export const boardSlice = createSlice({
@@ -49,7 +81,7 @@ export const boardSlice = createSlice({
 			// immutable state based off those changes
 			// state.value += 1
 		},
-		moveTask: (state, action: PayloadAction<moveTaskType>) => {
+		moveTask: (state, action: PayloadAction<moveTaskPayloadType>) => {
 			const { activeTaskId, sourceColumnId, targetColumnId } =
 				action.payload;
 			if (sourceColumnId !== targetColumnId) {
@@ -69,7 +101,7 @@ export const boardSlice = createSlice({
 				);
 				if (taskIndex === -1) return;
 
-				// Remove the task from the source and add to target
+			
 				const movedTask = sourceColumn.tasks?.splice(
 					taskIndex as number,
 					1
@@ -79,8 +111,21 @@ export const boardSlice = createSlice({
 						id: movedTask[0].id,
 						taskName: movedTask[0].taskName,
 						description: movedTask[0].description,
-						// subtasks: [...movedTask[0]?.subtasks],
+						subtasks: movedTask[0].subtasks,
 					});
+				}
+			}
+		},
+		deleteTask: (state, action: PayloadAction<{ id: string }>) => {
+			const { id } = action.payload;
+
+			for (const column of state.columns) {
+				const taskIndex = column?.tasks?.findIndex(
+					(task) => task.id === id
+				);
+				if (taskIndex !== -1) {
+					column?.tasks?.splice(taskIndex as number, 1);
+					return;
 				}
 			}
 		},
@@ -91,6 +136,22 @@ export const boardSlice = createSlice({
 				id: "",
 			};
 		},
+		updateSubtask: (
+			state,
+			action: PayloadAction<updateSubTaskPayloadType>
+		) => {
+			const { id, status } = action.payload;
+			for (const column of state.columns) {
+				for (const task of column?.tasks ?? []) {
+					const subtask = task?.subtasks?.find((st) => st.id === id);
+					if (subtask) {
+						subtask.completed = status;
+						return;
+					}
+				}
+			}
+		},
+
 		decrement: (state) => {
 			// state.value -= 1
 		},
@@ -101,7 +162,13 @@ export const boardSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { createBoard, decrement, incrementByAmount, moveTask } =
-	boardSlice.actions;
+export const {
+	createBoard,
+	decrement,
+	incrementByAmount,
+	moveTask,
+	deleteTask,
+	updateSubtask,
+} = boardSlice.actions;
 
 export default boardSlice.reducer;
