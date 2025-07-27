@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 
 import {
 	Sidebar,
@@ -7,15 +7,17 @@ import {
 	SidebarHeader,
 	SidebarRail,
 } from "@/components/ui/sidebar";
-import { Button } from "./ui/button";
-import BoardIcon from "@/app/icons/board-icon";
 import Image from "next/image";
 import Footer from "./footer";
-import BoardLists from "./boardlists";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import Createboard from "./create-board";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+	children,
+	...props
+}: {
+	children?: React.ReactNode;
+} & React.ComponentProps<typeof Sidebar>) {
 	const [open, setOpen] = useState(false);
 	return (
 		<Sidebar collapsible="offcanvas" {...props}>
@@ -31,20 +33,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				</h1>
 			</SidebarHeader>
 			<SidebarContent>
-				{/* <Suspense fallback={"Loading board lists"}>
-					<BoardLists />
-				</Suspense> */}
-				<Button
-					variant={"default"}
-					className="!pl-6 mr-6 !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none justify-start"
-				>
-					<BoardIcon className="mr-2" /> Platform Launch
-				</Button>
-
+				{children}
 				<Createboard />
-				{/* n
-				<NavMain items={data.navMain} />
-				jsdf */}
 			</SidebarContent>
 
 			<Footer />
@@ -136,7 +126,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							</div>
 						</form>
 					</Form> */}
-				
 				</DialogContent>
 			</Dialog>
 		</Sidebar>

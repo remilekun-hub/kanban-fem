@@ -7,7 +7,8 @@ type Props = {
 	};
 };
 
-export default function SingleBoard({ params: { id } }: Props) {
+export default async function SingleBoard({ params: { id } }: Props) {
+	const boardId = await id
 	return (
 		<div>
 			{/* <Board /> */}

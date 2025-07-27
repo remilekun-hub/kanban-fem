@@ -67,7 +67,7 @@ export default function Createboard() {
 		<div>
 			<Button
 				variant={"default"}
-				className="!pl-6 mr-6 justofy-start !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none hover:cursor-pointer !text-primary !bg-transparent justify-start"
+				className="!shadow-none !pl-6 mr-6 justofy-start !py-6 font-[700] text-[15px] leading-[19px] rounded-l-none hover:cursor-pointer !text-primary !bg-transparent justify-start"
 				onClick={() => setOpen(true)}
 			>
 				<BoardIcon className="mr-2" />+ Create New Board

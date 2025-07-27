@@ -18,7 +18,6 @@ export type TaskType = {
 export type BoardLinkType = {
 	id: string;
 	boardName: string;
-	isActive: boolean;
 };
 
 export type SubTaskType = {
