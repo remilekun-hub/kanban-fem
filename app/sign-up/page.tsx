@@ -9,7 +9,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { singInWithCred } from "@/lib/actions/auth";
+import { signUp } from "@/lib/actions/auth";
 import { SignUpSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 
-const SignIn = () => {
+const SignUp = () => {
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
 	const form = useForm<z.infer<typeof SignUpSchema>>({
@@ -33,10 +33,10 @@ const SignIn = () => {
 
 	const onSubmit = (data: z.infer<typeof SignUpSchema>) => {
 		startTransition(async () => {
-			const result = await singInWithCred(data);
+			const result = await signUp(data);
 			if (result.success) {
 				toast.success("Success", {
-					description: "You have successfully logged in.",
+					description: "You have successfully signed up.",
 				});
 				router.push("/board");
 			} else {
@@ -50,7 +50,7 @@ const SignIn = () => {
 	return (
 		<div className="h-svh flex justify-center items-center">
 			<div className="text-black w-full max-w-[500px] border-2 p-4 rounded-xl pb-6 lg:p-5 lg:pb-6">
-				<h1 className="font-bold text-center text-3xl mb-7">Sign In</h1>
+				<h1 className="font-bold text-center text-3xl mb-7">Sign Up</h1>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)}>
 						<FormField
@@ -112,4 +112,4 @@ const SignIn = () => {
 	);
 };
 
-export default SignIn;
+export default SignUp;

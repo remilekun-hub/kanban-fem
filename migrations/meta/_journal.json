@@ -15,6 +15,41 @@
       "when": 1753479214155,
       "tag": "0001_freezing_kat_farrell",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758967956814,
+      "tag": "0002_swift_angel",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1758968344382,
+      "tag": "0003_true_mentallo",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1758968818555,
+      "tag": "0004_fancy_the_fury",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1758973310872,
+      "tag": "0005_complete_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1758977111766,
+      "tag": "0006_open_lenny_balinger",
+      "breakpoints": true
     }
   ]
 }

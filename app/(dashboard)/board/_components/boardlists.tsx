@@ -3,25 +3,16 @@ import { db } from "@/db/drizzle";
 import { boards } from "@/db/schema";
 import Boardlink from "@/components/boardlink";
 import { eq } from "drizzle-orm";
+import { auth } from "@/auth";
 
 const BoardLists = async () => {
-	const data = await db.select().from(boards);
-	// const data = await db.select().from(boards).where(eq(boards.userId, 'e'));
+	const session = await auth();
+	const userId = session?.user?.id as string;
+	const data = await db
+		.select()
+		.from(boards)
+		.where(eq(boards.userId, userId));
 
-	// const userBoards = await db.query.boards.findMany({
-	// 	where: eq(boards.userId, userId),
-	// 	with: {
-	// 		columns: {
-	// 			with: {
-	// 				tasks: {
-	// 					with: {
-	// 						subtasks: true,
-	// 					},
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// });
 	return (
 		<div>
 			<h2 className="text-muted mb uppercase text-[12px] font-[700] tracking-[2px] pl-5 mt-5 mb-4">

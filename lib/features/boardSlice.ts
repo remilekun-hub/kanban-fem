@@ -4,47 +4,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { BoardType, TaskType } from "../../app/types";
 
 const initialState: BoardType = {
-	boardName: "sjbf",
-	columns: [
-		{
-			id: "f",
-			name: "whf",
-			tasks: [
-				{
-					id: "ef",
-					taskName: "jef",
-					description: "jkefj",
-					subtasks: [
-						{
-							id: "ww",
-							title: "hekkgv",
-							completed: true,
-							column: "",
-						},
-						{
-							id: "ww2",
-							title: "hekk",
-							completed: false,
-							column: "",
-						},
-					],
-				},
-			],
-		},
-		{
-			id: "fj",
-			name: "whfj",
-			tasks: [
-				{
-					id: "efjkj",
-					taskName: "jenf",
-					description: "jkefj",
-					subtasks: [],
-				},
-			],
-		},
-	],
-	id: "jsvdj",
+	boardName: "",
+	columns: [],
+	id: "",
 };
 
 type moveTaskPayloadType = {
@@ -63,6 +25,15 @@ export const boardSlice = createSlice({
 	initialState,
 	reducers: {
 		createBoard: (state, action: PayloadAction<BoardType>) => {
+			const {
+				payload: { id, boardName, columns },
+			} = action;
+
+			state.id = id;
+			state.boardName = boardName;
+			state.columns = [...columns];
+		},
+		createColumn: (state, action: PayloadAction<BoardType>) => {
 			const {
 				payload: { id, boardName, columns },
 			} = action;
@@ -101,7 +72,6 @@ export const boardSlice = createSlice({
 				);
 				if (taskIndex === -1) return;
 
-			
 				const movedTask = sourceColumn.tasks?.splice(
 					taskIndex as number,
 					1
@@ -152,9 +122,6 @@ export const boardSlice = createSlice({
 			}
 		},
 
-		decrement: (state) => {
-			// state.value -= 1
-		},
 		incrementByAmount: (state, action: PayloadAction<number>) => {
 			// state.value += action.payload
 		},
@@ -164,7 +131,6 @@ export const boardSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
 	createBoard,
-	decrement,
 	incrementByAmount,
 	moveTask,
 	deleteTask,

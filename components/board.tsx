@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import AddColumn from "./add-column";
 import Column from "./column";
 import {
@@ -11,10 +11,21 @@ import {
 } from "@dnd-kit/core";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/features/store";
-import { moveTask } from "../lib/features/boardSlice";
+import { createBoard, moveTask } from "../lib/features/boardSlice";
+import { BoardType } from "@/app/types";
 
-export default function Board() {
+type MainBoardType = {
+	boardId: string;
+	userId: string;
+	board: BoardType;
+};
+export default function Board({ boardId, userId, board }: MainBoardType) {
+	
 	const dispatch = useDispatch();
+	useEffect(() => {
+		dispatch(createBoard(board));
+	}, []);
+
 	const boardState = useSelector((state: RootState) => state.board);
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -22,13 +33,8 @@ export default function Board() {
 				distance: 8,
 			},
 		})
-	)
+	);
 
-	// return (
-	// 	<div className="h-full flex justify-center items-center">
-	// 		<h1>Hello wokd</h1>
-	// 	</div>
-	// );
 	type Active = {
 		id: string | number; // Unique ID of the dragged item
 		data?: {

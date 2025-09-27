@@ -8,6 +8,8 @@ import "@fontsource/plus-jakarta-sans/400.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
+import { Toaster } from "@/components/ui/sonner";
+
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -19,20 +21,23 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+
+	
 	return (
 		<html lang="en">
-			<body
-				className={`antialiased`}
-			>
-				<Reduxprovider>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="light"
-						enableSystem
-					>
-						{children}
-					</ThemeProvider>
-				</Reduxprovider>
+			<body className={`antialiased`}>
+				
+					<Reduxprovider>
+						<ThemeProvider
+							attribute="class"
+							defaultTheme="light"
+							enableSystem
+						>
+							<Toaster richColors />
+							{children}
+						</ThemeProvider>
+					</Reduxprovider>
+		
 			</body>
 		</html>
 	);

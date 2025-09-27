@@ -100,7 +100,7 @@ export default function Navbar() {
 
 			<div className="justify-between flex items-center md:flex-1">
 				<h1 className="hidden md:block text-black dark:text-white font-[700] text-[1.315rem]">
-					Board NAME
+					{board.boardName}
 				</h1>
 				<div className="flex items-center">
 					<AddTask />

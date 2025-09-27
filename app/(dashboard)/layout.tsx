@@ -9,12 +9,15 @@ import "@fontsource/plus-jakarta-sans/600.css";
 import "@fontsource/plus-jakarta-sans/700.css";
 import { Suspense } from "react";
 import BoardLists from "./board/_components/boardlists";
+import { auth } from "@/auth";
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const session = await auth();
+	
 	return (
 		<SidebarProvider>
 			<AppSidebar>

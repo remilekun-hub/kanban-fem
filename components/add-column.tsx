@@ -34,7 +34,7 @@ export default function AddColumn() {
 			columnNames: [],
 			id: "",
 		},
-		mode: "all",
+		mode: "onBlur",
 	});
 
 	const { fields, append, remove } = useFieldArray({
@@ -146,7 +146,12 @@ export default function AddColumn() {
 								<Button
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 									type="button"
-									onClick={() => append({ name: "" })}
+									onClick={() =>
+										append(
+											{ name: "" },
+											{ shouldFocus: false }
+										)
+									}
 								>
 									+ Add New Column
 								</Button>

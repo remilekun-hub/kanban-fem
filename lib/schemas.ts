@@ -33,3 +33,9 @@ export const addTaskSchema = z.object({
 		})
 	),
 });
+
+export const SignUpSchema = z.object({
+	email: z.email(),
+	password: z.string().min(1, "required"),
+
+});

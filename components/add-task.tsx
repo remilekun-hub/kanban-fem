@@ -40,7 +40,7 @@ export default function AddTask() {
 				},
 			],
 		},
-		mode: "all",
+		mode: "onBlur",
 	});
 
 	const { fields, append, remove } = useFieldArray({
@@ -168,7 +168,7 @@ export default function AddTask() {
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 									type="button"
 									onClick={() =>
-										append({ completed: false, title: "" })
+										append({ completed: false, title: "" }, { shouldFocus: false })
 									}
 								>
 									+ Add New SubTask
