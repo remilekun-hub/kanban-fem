@@ -2,7 +2,6 @@
 import React from "react";
 import AddColumn from "./add-column";
 import Column from "./column";
-import { TaskType } from "@/app/types";
 import {
 	DndContext,
 	useSensor,
@@ -17,41 +16,6 @@ import { moveTask } from "../lib/features/boardSlice";
 export default function Board() {
 	const dispatch = useDispatch();
 	const boardState = useSelector((state: RootState) => state.board);
-	// const boards: BoardType[] = [
-	// 	{
-	// 		id: "1233",
-	// 		boardName: "Board one",
-	// 		columns: [
-	// 			{
-	// 				id: "1290",
-	// 				name: "Test This",
-	// 				tasks: [
-	// 					{
-	// 						id: "xx1231",
-	// 						taskName: "do this",
-	// 						subtasks: [],
-	// 						description: "yes we iljj",
-	// 					},
-	// 				],
-	// 			},
-	// 			{
-	// 				id: "xu12",
-	// 				name: "Test Again",
-	// 				tasks: [
-	// 					{
-	// 						id: "xx991",
-	// 						taskName: "done",
-	// 						subtasks: [],
-	// 						description: "yes we iljj",
-	// 					},
-	// 				],
-	// 			},
-	// 		],
-	// 	},
-	// ];
-
-	// const sensors = useSensors(useSensor(PointerSensor));
-
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
 			activationConstraint: {

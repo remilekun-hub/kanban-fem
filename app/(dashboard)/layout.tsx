@@ -15,7 +15,6 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	
 	return (
 		<SidebarProvider>
 			<AppSidebar>
@@ -25,7 +24,6 @@ export default function RootLayout({
 			</AppSidebar>
 			<div className="w-full overflow-hidden min-h-full h-svh">
 				<Navbar />
-
 				{children}
 			</div>
 		</SidebarProvider>
