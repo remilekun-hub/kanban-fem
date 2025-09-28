@@ -23,7 +23,10 @@ import { Input } from "./ui/input";
 import { Loader2, XIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/features/store";
-import { addUserColumn } from "@/app/(dashboard)/board/actions";
+import {
+	addUserColumn,
+	deleteUserColumn,
+} from "@/app/(dashboard)/board/actions";
 import { toast } from "sonner";
 import { createColumn } from "@/lib/features/boardSlice";
 import { v4 as uuidv4 } from "uuid";
@@ -43,7 +46,7 @@ export default function AddColumn({
 		resolver: zodResolver(addColumnSchema),
 		defaultValues: {
 			boardName: "",
-			columnNames: [{ name: "" }],
+			columnNames: [{ name: "", id: "" }],
 			id: "",
 		},
 		mode: "onBlur",
@@ -90,12 +93,14 @@ export default function AddColumn({
 		}
 	}, [form, board]);
 
+	const [deletingId, setDeletingId] = useState<string | null>(null);
+
 	return (
 		<div>
 			<div className="flex flex-col justify-center h-full mt-[31px] max-h-[calc(100svh-150px)] lg:max-h-[calc(100svh-170px)]">
 				<div className="cursor-pointer flex h-full justify-center items-center bg-foreground dark:bg-[#22232E] rounded-[6px] shrink-0 min-w-[280px]">
 					<button
-						className="text-muted font-[700] text-[24px] leading-[30px] hover:text-primary"
+						className="text-muted font-[700] text-[24px] leading-[30px] hover:text-primary !cursor-pointer"
 						onClick={() => setOpen(true)}
 					>
 						+ New Column
@@ -139,9 +144,9 @@ export default function AddColumn({
 								Board Columns
 							</h3>
 							<div className="!mt-3 flex flex-col gap-4">
-								{fields.map((field, index) => (
+								{fields.map((item, index) => (
 									<FormField
-										key={field.id}
+										key={item.id}
 										control={form.control}
 										name={`columnNames.${index}.name`}
 										render={({ field }) => (
@@ -153,19 +158,62 @@ export default function AddColumn({
 															className="text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
 															{...field}
 														/>
+														{deletingId ===
+														form.getValues(
+															`columnNames.${index}.id`
+														) ? (
+															<Loader2 className="animate-spin text-muted size-6" />
+														) : (
+															<button
+																className="outline-none ring-0 cursor-pointer"
+																type="button"
+																onClick={async () => {
+																	const columnId =
+																		form.getValues(
+																			`columnNames.${index}.id`
+																		);
 
-														<button
-															className="outline-none ring-0 cursor-pointer"
-															type="button"
-															onClick={() =>
-																remove(index)
-															}
-														>
-															<XIcon
-																className="text-muted size-6"
-																strokeWidth={3}
-															/>
-														</button>
+																	setDeletingId(
+																		columnId
+																	);
+
+																	if (
+																		columnId
+																	) {
+																		const result =
+																			await deleteUserColumn(
+																				userId,
+																				boardId,
+																				columnId
+																			);
+																		if (
+																			result?.success
+																		) {
+																			toast.success(
+																				"Success",
+																				{
+																					description:
+																						result.message,
+																				}
+																			);
+																		}
+																	}
+																	remove(
+																		index
+																	);
+																	setDeletingId(
+																		null
+																	);
+																}}
+															>
+																<XIcon
+																	className="text-muted size-6"
+																	strokeWidth={
+																		3
+																	}
+																/>
+															</button>
+														)}
 													</div>
 												</FormControl>
 
@@ -181,7 +229,7 @@ export default function AddColumn({
 									type="button"
 									onClick={() =>
 										append(
-											{ name: "" },
+											{ name: "", id: uuidv4() },
 											{ shouldFocus: false }
 										)
 									}
