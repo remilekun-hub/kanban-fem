@@ -61,7 +61,7 @@ export default async function SingleBoard({ params }: Props) {
 		boardName: boardData.boardName,
 		columns: boardColumns as ColumnType[],
 	};
-	console.log({ board });
+	
 	return (
 		<div>
 			<Board boardId={boardId} userId={userId} board={board} />

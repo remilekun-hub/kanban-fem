@@ -38,19 +38,9 @@ export const boardSlice = createSlice({
 				payload: { id, boardName, columns },
 			} = action;
 
-			const newBoard = {
-				id,
-				boardName,
-				columns: [...columns],
-			};
-
-			state = newBoard;
-			// [...state]
-			// Redux Toolkit allows us to write "mutating" logic in reducers. It
-			// doesn't actually mutate the state because it uses the Immer library,
-			// which detects changes to a "draft state" and produces a brand new
-			// immutable state based off those changes
-			// state.value += 1
+			state.id = id;
+			state.boardName = boardName;
+			state.columns = [...columns];
 		},
 		moveTask: (state, action: PayloadAction<moveTaskPayloadType>) => {
 			const { activeTaskId, sourceColumnId, targetColumnId } =
@@ -131,6 +121,7 @@ export const boardSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
 	createBoard,
+	createColumn,
 	incrementByAmount,
 	moveTask,
 	deleteTask,

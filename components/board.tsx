@@ -91,7 +91,7 @@ export default function Board({ boardId, userId, board }: MainBoardType) {
 					<Column key={index} {...col} />
 				))}
 			</DndContext>
-			<AddColumn />
+			<AddColumn boardId={boardId} userId={userId} />
 		</div>
 	);
 }

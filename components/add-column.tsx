@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -10,7 +10,7 @@ import { Button } from "./ui/button";
 import { useForm, useFieldArray } from "react-hook-form";
 import { addColumnSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
+import { z } from "zod";
 import {
 	FormControl,
 	FormField,
@@ -20,18 +20,30 @@ import {
 	FormLabel,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { XIcon } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Loader2, XIcon } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/features/store";
+import { addUserColumn } from "@/app/(dashboard)/board/actions";
+import { toast } from "sonner";
+import { createColumn } from "@/lib/features/boardSlice";
+import { v4 as uuidv4 } from "uuid";
 
-export default function AddColumn() {
+export default function AddColumn({
+	boardId,
+	userId,
+}: {
+	boardId: string;
+	userId: string;
+}) {
+	const dispatch = useDispatch();
+	const [isPending, startTransition] = useTransition();
 	const [open, setOpen] = useState(false);
 	const board = useSelector((state: RootState) => state.board);
 	const form = useForm<z.infer<typeof addColumnSchema>>({
 		resolver: zodResolver(addColumnSchema),
 		defaultValues: {
 			boardName: "",
-			columnNames: [],
+			columnNames: [{ name: "" }],
 			id: "",
 		},
 		mode: "onBlur",
@@ -44,18 +56,39 @@ export default function AddColumn() {
 
 	const onSubmit = (data: z.infer<typeof addColumnSchema>) => {
 		alert("submitted");
+		console.log("submitted");
 		console.log({ data });
+		const columns = data.columnNames.map((d) => ({
+			name: d.name,
+			id: uuidv4(),
+		}));
+
+		startTransition(async () => {
+			const result = await addUserColumn(
+				userId,
+				boardId,
+				columns,
+				data.boardName
+			);
+
+			if (!result.success) {
+				toast.error("Error", { description: result.error });
+			} else {
+				toast.success("Success", { description: result.message });
+				dispatch(createColumn({ ...data, columns: columns }));
+			}
+		});
 	};
 
 	useEffect(() => {
-		if (Object.values(board)[0].length) {
+		if (board) {
 			form.reset({
 				boardName: board.boardName,
 				columnNames: [...board.columns],
 				id: board.id,
 			});
 		}
-	}, [form]);
+	}, [form, board]);
 
 	return (
 		<div>
@@ -116,7 +149,7 @@ export default function AddColumn() {
 												<FormControl>
 													<div className="flex items-center gap-3">
 														<Input
-															// placeholder="Column name"
+															placeholder="Column name"
 															className="text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
 															{...field}
 														/>
@@ -159,6 +192,9 @@ export default function AddColumn() {
 									className="font-[700] h-[42px] text-[13px] cursor-pointer"
 									type="submit"
 								>
+									{isPending ? (
+										<Loader2 className="animate-spin size-4" />
+									) : null}{" "}
 									Save Changes
 								</Button>
 							</div>

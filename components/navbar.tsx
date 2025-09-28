@@ -2,27 +2,25 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { MoreVertical, PlusIcon, XIcon } from "lucide-react";
+import { MoreVertical, XIcon } from "lucide-react";
 import { useSidebar } from "./ui/sidebar";
 import {
 	DropdownMenu,
-	DropdownMenuCheckboxItem,
+
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
+	
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
 	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
+	
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger,
+	
 } from "@/components/ui/alert-dialog";
 import { addColumnSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,7 +49,6 @@ export default function Navbar() {
 	const { open } = useSidebar();
 	const [confirmDelete, setConfirmDelete] = useState(false);
 	const board = useSelector((state: RootState) => state.board);
-	console.log({ board });
 	const [editBoard, setEditBoard] = useState(false);
 	const form = useForm<z.infer<typeof addColumnSchema>>({
 		resolver: zodResolver(addColumnSchema),
