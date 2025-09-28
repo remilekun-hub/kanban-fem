@@ -23,15 +23,19 @@ export async function addUserColumn(
 			};
 		}
 
-		// 2. Update board name if changed
+		let boardUpdated = false;
+		let columnsInserted = false;
+
+		// Update board name if changed
 		if (board[0].boardName !== boardName) {
 			await db
 				.update(boards)
 				.set({ boardName })
 				.where(eq(boards.id, boardId));
+			boardUpdated = true;
 		}
 
-		// 3. Fetch existing columns
+		// Fetch existing columns
 		const existingColumns = await db
 			.select({ name: columns.name })
 			.from(columns)
@@ -43,33 +47,36 @@ export async function addUserColumn(
 			(col) => !existingNames.has(col.name)
 		);
 
-		if (newColumns.length === 0) {
-			return {
-				success: false,
-				error: "All column names already exist.",
-			};
+		if (newColumns.length > 0) {
+			const valuesToInsert = newColumns.map((col) => ({
+				id: col.id,
+				name: col.name,
+				boardId,
+				userId,
+			}));
+
+			await db.insert(columns).values(valuesToInsert);
+			columnsInserted = true;
 		}
 
-		const valuesToInsert = newColumns.map((col) => ({
-			id: col.id,
-			name: col.name,
-			boardId,
-			userId,
-		}));
-
-		await db.insert(columns).values(valuesToInsert);
-
-		return {
-			success: true,
-			message: `Added ${newColumns.length} new column${
-				newColumns.length > 1 ? "s" : ""
-			} successfully.`,
-		};
+		if (boardUpdated || columnsInserted) {
+			return {
+				success: true,
+				message: `${
+					boardUpdated ? "Board name updated." : ""
+				} ${columnsInserted ? `Added ${newColumns.length} new column(s).` : ""}`.trim(),
+			};
+		} else {
+			return {
+				success: false,
+				error: "No changes were made.",
+			};
+		}
 	} catch (error) {
 		console.error("Add column error:", error);
 		return {
 			success: false,
-			error: "Failed to add column(s).",
+			error: "Failed to update board or add columns.",
 		};
 	}
 }
