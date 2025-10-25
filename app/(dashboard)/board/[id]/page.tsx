@@ -1,12 +1,10 @@
 import { BoardType, ColumnType } from "@/app/types";
 import { auth } from "@/auth";
 import Board from "@/components/board";
-import { db } from "@/db/drizzle";
-import { boards, columns, tasks } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import React from "react";
+import { getBoardWithColumnsAndTasks } from "../actions";
 
 type Props = {
 	params: Promise<{ id: string }>;
@@ -24,45 +22,14 @@ export default async function SingleBoard({ params }: Props) {
 	}
 	const userId = session?.user?.id as string;
 	const { id: boardId } = await params;
-
-	const result = await db
-		.select({
-			board: boards,
-			column: {
-				id: columns.id,
-				name: columns.name,
-				
-			},
-			task: {
-				id: tasks.id,
-				taskName: tasks.taskName,
-				description: tasks.description,
-			},
-		})
-		.from(boards)
-		.leftJoin(columns, eq(columns.boardId, boards.id))
-		.leftJoin(tasks, eq(tasks.columnId, columns.id))
-		.where(and(eq(boards.id, boardId), eq(boards.userId, userId)));
-
-	// if (boardData.length === 0) {
-	// 	return <div>not found</div>;
-	// }
-
-	// const columns = result[0]
-	// .map(row => row.column)
-	// .filter(col => col !== null); // in case there are no columns yet
-
-	const boardData = result[0]?.board;
-	const boardColumns = result
-		.map((row) => row.column)
-		.filter((col) => col !== null);
+	const boardData = await getBoardWithColumnsAndTasks(boardId, userId);
 
 	const board: BoardType = {
-		id: boardData?.id ?? '',
-		boardName: boardData?.boardName ?? '',
-		columns: boardColumns as ColumnType[] ?? [],
+		id: boardData?.data?.id ?? "",
+		boardName: boardData?.data?.boardName ?? "",
+		columns: (boardData?.data?.columns as ColumnType[]) ?? [],
 	};
-	
+
 	return (
 		<div>
 			<Board boardId={boardId} userId={userId} board={board} />

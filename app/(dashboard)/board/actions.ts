@@ -2,7 +2,66 @@
 import { db } from "@/db/drizzle";
 import { boards, columns, subtasks, tasks, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { revalidatePath, unstable_cache } from "next/cache";
+import { revalidatePath } from "next/cache";
+
+export async function getBoardWithColumnsAndTasks(
+	boardId: string,
+	userId: string
+) {
+	// Fetch columns for the board
+	const columnsData = await db
+		.select({
+			id: columns.id,
+			name: columns.name,
+		})
+		.from(columns)
+		.innerJoin(boards, eq(columns.boardId, boards.id))
+		.where(and(eq(boards.id, boardId), eq(boards.userId, userId)));
+
+	// For each column, fetch its tasks
+	const columnsWithTasks = await Promise.all(
+		columnsData.map(async (col) => {
+			const tasksData = await db
+				.select({
+					id: tasks.id,
+					taskName: tasks.taskName,
+					description: tasks.description,
+				})
+				.from(tasks)
+				.where(eq(tasks.columnId, col.id));
+
+			return {
+				...col,
+				tasks: tasksData,
+			};
+		})
+	);
+
+	// Fetch the board details
+	const boardData = await db
+		.select({
+			id: boards.id,
+			boardName: boards.boardName,
+		})
+		.from(boards)
+		.where(and(eq(boards.id, boardId), eq(boards.userId, userId)))
+		.limit(1);
+
+	if (boardData.length === 0)
+		return {
+			success: false,
+			message: "board not found",
+		};
+
+	return {
+		success:true,
+		message:'Board fetched successffully',
+		data:{
+			...boardData[0],
+		columns: columnsWithTasks,
+		}
+	};
+}
 
 export const getBoards = async (userId: string) => {
 	const data = await db

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { db } from "@/db/drizzle";
 import { boards } from "@/db/schema";
@@ -7,7 +6,6 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import Createboard from "@/components/create-board";
 import { getBoards } from "../actions";
-
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +27,7 @@ const BoardLists = async () => {
 				/>
 			))}
 
-			<Createboard userId={userId} />
+			<Createboard />
 		</div>
 	);
 };

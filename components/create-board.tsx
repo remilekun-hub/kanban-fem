@@ -18,12 +18,14 @@ import {
 import { Input } from "./ui/input";
 import { XIcon } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { createBoard } from "../lib/features/boardSlice";
 import { v4 as uuidv4 } from "uuid";
 import { addBoard } from "@/app/(dashboard)/board/actions";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
-export default function Createboard({ userId }: { userId: string }) {
+export default function Createboard() {
+	const {data} = useSession()
+	const userId = data?.user?.id as string
 	const [isPending, startTransition] = useTransition();
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
