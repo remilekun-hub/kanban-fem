@@ -1,7 +1,7 @@
 "use client";
 import { addColumnSchema, createBoardSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { startTransition, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "./ui/button";
@@ -20,8 +20,10 @@ import { XIcon } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { createBoard } from "../lib/features/boardSlice";
 import { v4 as uuidv4 } from "uuid";
+import { addBoard } from "@/app/(dashboard)/board/actions";
+import { toast } from "sonner";
 
-export default function Createboard() {
+export default function Createboard({ userId }: { userId: string }) {
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof createBoardSchema>>({
@@ -49,18 +51,31 @@ export default function Createboard() {
 	});
 
 	const onSubmit = (data: z.infer<typeof createBoardSchema>) => {
-		
 		const columnNames = data.columnNames.map((col) => {
 			return { name: col.name, id: col.id };
 		});
 
-		dispatch(
-			createBoard({
-				id: uuidv4(),
-				boardName: data.name,
-				columns: [...columnNames],
-			})
-		);
+		// dispatch(
+		// 	createBoard({
+		// 		id: uuidv4(),
+		// 		boardName: data.name,
+		// 		columns: [...columnNames],
+		// 	})
+		// );
+
+		startTransition(async () => {
+			const result = await addBoard(userId, data.name);
+			if (result.success) {
+				toast.success("Success", {
+					description: result.message,
+				});
+				setOpen(false);
+			} else {
+				toast.error("Error", {
+					description: result.error,
+				});
+			}
+		});
 	};
 
 	return (

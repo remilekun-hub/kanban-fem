@@ -4,15 +4,13 @@ import { boards } from "@/db/schema";
 import Boardlink from "@/components/boardlink";
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
+import Createboard from "@/components/create-board";
+import { getBoards } from "../actions";
 
 const BoardLists = async () => {
 	const session = await auth();
 	const userId = session?.user?.id as string;
-	const data = await db
-		.select()
-		.from(boards)
-		.where(eq(boards.userId, userId));
-
+	const data = await getBoards(userId);
 	return (
 		<div>
 			<h2 className="text-muted mb uppercase text-[12px] font-[700] tracking-[2px] pl-5 mt-5 mb-4">
@@ -26,6 +24,8 @@ const BoardLists = async () => {
 					id={board.id}
 				/>
 			))}
+
+			<Createboard userId={userId} />
 		</div>
 	);
 };

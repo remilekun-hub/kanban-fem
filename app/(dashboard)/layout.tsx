@@ -10,6 +10,7 @@ import "@fontsource/plus-jakarta-sans/700.css";
 import { Suspense } from "react";
 import BoardLists from "./board/_components/boardlists";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export default async function RootLayout({
 	children,
@@ -17,7 +18,10 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 	const session = await auth();
-	
+	if (!session?.user) {
+		redirect("/sign-in");
+	}
+
 	return (
 		<SidebarProvider>
 			<AppSidebar>

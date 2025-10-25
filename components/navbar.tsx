@@ -6,21 +6,17 @@ import { MoreVertical, XIcon } from "lucide-react";
 import { useSidebar } from "./ui/sidebar";
 import {
 	DropdownMenu,
-
 	DropdownMenuContent,
 	DropdownMenuItem,
-	
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
 	AlertDialog,
-	
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	
 } from "@/components/ui/alert-dialog";
 import { addColumnSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +50,7 @@ export default function Navbar() {
 		resolver: zodResolver(addColumnSchema),
 		defaultValues: {
 			boardName: "",
-			columnNames: [],
+			columnNames: [{ name: "", id: "" }],
 			id: "",
 		},
 		mode: "all",

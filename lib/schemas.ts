@@ -10,7 +10,7 @@ export const createBoardSchema = z.object({
 			
 		})
 	),
-	id: z.uuid({version:'v4'}).min(1, "required"),
+	id: z.uuid().min(1, "required"),
 });
 
 export const addColumnSchema = z.object({

@@ -34,7 +34,7 @@ export const singInWithCred = async (params: AuthCred) => {
 		console.log(error, "signin error");
 		return {
 			success: false,
-			error: "error signing up",
+			error: "error signing in",
 		};
 	}
 };

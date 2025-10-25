@@ -31,6 +31,7 @@ export default async function SingleBoard({ params }: Props) {
 			column: {
 				id: columns.id,
 				name: columns.name,
+				
 			},
 			task: {
 				id: tasks.id,
