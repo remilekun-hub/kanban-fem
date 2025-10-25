@@ -58,9 +58,7 @@ export default function AddColumn({
 	});
 
 	const onSubmit = (data: z.infer<typeof addColumnSchema>) => {
-		alert("submitted");
-		console.log("submitted");
-		console.log({ data });
+	
 		const columns = data.columnNames.map((d) => ({
 			name: d.name,
 			id: uuidv4(),
@@ -226,6 +224,7 @@ export default function AddColumn({
 							<div className="flex flex-col gap-4 mt-5">
 								<Button
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
+									disabled={isPending}
 									type="button"
 									onClick={() =>
 										append(
@@ -239,10 +238,9 @@ export default function AddColumn({
 								<Button
 									className="font-[700] h-[42px] text-[13px] cursor-pointer"
 									type="submit"
+									isLoading={isPending}
+									disabled={isPending}
 								>
-									{isPending ? (
-										<Loader2 className="animate-spin size-4" />
-									) : null}{" "}
 									Save Changes
 								</Button>
 							</div>

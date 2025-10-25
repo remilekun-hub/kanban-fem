@@ -69,7 +69,6 @@ export default function Navbar({ userId }: { userId: string }) {
 	});
 
 	const onSubmit = (data: z.infer<typeof addColumnSchema>) => {
-		alert("submitted");
 		console.log({ data });
 	};
 
@@ -88,7 +87,7 @@ export default function Navbar({ userId }: { userId: string }) {
 		startTransition(async () => {
 			const result = await deleteBoard(userId, boardId);
 			if (!result.success) {
-				toast.error(result.message);
+				toast.error("Error", { description: result.message });
 			} else {
 				// router.push("/board")
 

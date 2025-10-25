@@ -3,7 +3,6 @@ import { db } from "@/db/drizzle";
 import { boards, columns, tasks, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { revalidateTag, unstable_cache } from "next/cache";
-import { redirect } from "next/navigation";
 
 export const getBoards = unstable_cache(
 	async (userId: string) => {
@@ -20,44 +19,42 @@ export const getBoards = unstable_cache(
 	}
 );
 
-
 export const deleteBoard = async (userId: string, boardId: string) => {
-  // Validate input early
-  if (!userId || !boardId) {
-    return {
-      success: false,
-      message: "Missing userId or boardId",
-    };
-  }
+	// Validate input early
+	if (!userId || !boardId) {
+		return {
+			success: false,
+			message: "Missing userId or boardId",
+		};
+	}
 
-  // Check ownership
-  const board = await db
-    .select()
-    .from(boards)
-    .where(and(eq(boards.id, boardId), eq(boards.userId, userId)))
-    .limit(1);
+	// Check ownership
+	const board = await db
+		.select()
+		.from(boards)
+		.where(and(eq(boards.id, boardId), eq(boards.userId, userId)))
+		.limit(1);
 
-  if (!board || board.length === 0) {
-    return {
-      success: false,
-      message: "Board not found or access denied",
-    };
-  }
+	if (!board || board.length === 0) {
+		return {
+			success: false,
+			message: "Board not found or access denied",
+		};
+	}
 
-  // Proceed with deletion
-  await db
-    .delete(boards)
-    .where(and(eq(boards.id, boardId), eq(boards.userId, userId)));
+	// Proceed with deletion
+	await db
+		.delete(boards)
+		.where(and(eq(boards.id, boardId), eq(boards.userId, userId)));
 
-  // Revalidate cache for all boards
-  revalidateTag("boards");
+	// Revalidate cache for all boards
+	revalidateTag("boards");
 
-  return {
-    success: true,
-    message: "Board deleted successfully",
-  };
+	return {
+		success: true,
+		message: "Board deleted successfully",
+	};
 };
-
 
 export async function addBoard(userId: string, boardName: string) {
 	try {
@@ -118,6 +115,7 @@ export async function addUserColumn(
 				.set({ boardName })
 				.where(eq(boards.id, boardId));
 			boardUpdated = true;
+			revalidateTag("boards");
 		}
 
 		const existingColumns = await db

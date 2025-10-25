@@ -70,7 +70,7 @@ export default function Createboard({ userId }: { userId: string }) {
 				toast.success("Success", {
 					description: result.message,
 				});
-				form.reset()
+				form.reset();
 			} else {
 				toast.error("Error", {
 					description: result.error,
@@ -166,7 +166,10 @@ export default function Createboard({ userId }: { userId: string }) {
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 									type="button"
 									onClick={() =>
-										append({ name: "", id: uuidv4() })
+										append(
+											{ name: "", id: uuidv4() },
+											{ shouldFocus: false }
+										)
 									}
 								>
 									+ Add New Column
