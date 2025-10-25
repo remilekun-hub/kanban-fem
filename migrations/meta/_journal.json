@@ -50,6 +50,27 @@
       "when": 1758977111766,
       "tag": "0006_open_lenny_balinger",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1761401702732,
+      "tag": "0007_fuzzy_fixer",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1761415219196,
+      "tag": "0008_nebulous_sentinels",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1761415569777,
+      "tag": "0009_moaning_violations",
+      "breakpoints": true
     }
   ]
 }

@@ -11,7 +11,7 @@ export type ColumnType = {
 export type TaskType = {
 	id: string;
 	taskName: string;
-	subtasks?: SubTaskType[];
+	subtasks: SubTaskType[];
 	description: string;
 };
 
@@ -24,5 +24,5 @@ export type SubTaskType = {
 	id: string;
 	completed: boolean;
 	title:string;
-	column: string
+	taskId:string
 };

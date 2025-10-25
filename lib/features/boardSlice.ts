@@ -20,6 +20,11 @@ type updateSubTaskPayloadType = {
 	status: boolean;
 };
 
+type addTaskPayloadType = {
+  columnId: string;
+  task: TaskType;  
+};
+
 export const boardSlice = createSlice({
 	name: "board",
 	initialState,
@@ -42,6 +47,32 @@ export const boardSlice = createSlice({
 			state.boardName = boardName;
 			state.columns = [...columns];
 		},
+		addTask: (state, action: PayloadAction<addTaskPayloadType>) => {
+			const { columnId, task } = action.payload;
+		
+			// Find the correct column
+			const column = state.columns.find((col) => col.id === columnId);
+			if (!column) {
+				console.warn(`Column ${columnId} not found in board state.`);
+				return;
+			}
+		
+			// Ensure column.tasks exists
+			if (!column.tasks) {
+				column.tasks = [];
+			}
+		
+			// Add the new task with its subtasks
+			column.tasks.push({
+				...task,
+				subtasks: task.subtasks?.map((st) => ({
+					id: st.id,
+					title: st.title,
+					completed: st.completed,
+					taskId:st.taskId
+				})) || [],
+			});
+		},		
 		moveTask: (state, action: PayloadAction<moveTaskPayloadType>) => {
 			const { activeTaskId, sourceColumnId, targetColumnId } =
 				action.payload;
@@ -123,10 +154,11 @@ export const {
 	createBoard,
 	createColumn,
 	incrementByAmount,
+	addTask,
 	moveTask,
 	deleteTask,
 	updateSubtask,
-	removeBoard
+	removeBoard,
 } = boardSlice.actions;
 
 export default boardSlice.reducer;

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState, useTransition } from "react";
+import React, {useEffect, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { MoreVertical, XIcon } from "lucide-react";
 import { useSidebar } from "./ui/sidebar";
@@ -42,12 +42,10 @@ import { Input } from "./ui/input";
 import AddTask from "./add-task";
 import { deleteBoard } from "@/app/(dashboard)/board/actions";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
 import { removeBoard } from "@/lib/features/boardSlice";
-import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-export default function Navbar({ userId }: { userId: string }) {
-	const router = useRouter();
+export default function Navbar() {
 	const { open } = useSidebar();
 	const [isPending, startTransition] = useTransition();
 	const [confirmDelete, setConfirmDelete] = useState(false);
@@ -82,15 +80,21 @@ export default function Navbar({ userId }: { userId: string }) {
 		}
 	}, [form, board]);
 
+	const { data: session } = useSession();
+	const userId = session?.user?.id;
+	const boardId = form.watch("id");
+
 	const handleDeleteBoard = () => {
-		const boardId = form.watch("id");
+		if (!userId) {
+			return toast.error("Error", {
+				description: "Please sign in to continue",
+			});
+		}
 		startTransition(async () => {
 			const result = await deleteBoard(userId, boardId);
 			if (!result.success) {
 				toast.error("Error", { description: result.message });
 			} else {
-				// router.push("/board")
-
 				dispatch(removeBoard());
 				setConfirmDelete(false);
 				window.location.href = "/board";
@@ -119,6 +123,7 @@ export default function Navbar({ userId }: { userId: string }) {
 				</h1>
 				<div className="flex items-center">
 					<AddTask />
+				
 
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>

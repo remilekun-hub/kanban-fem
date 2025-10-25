@@ -11,6 +11,8 @@ import { Suspense } from "react";
 import BoardLists from "./board/_components/boardlists";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { SessionProvider } from "next-auth/react";
+import { getColumns } from "./board/actions";
 
 export default async function RootLayout({
 	children,
@@ -21,20 +23,19 @@ export default async function RootLayout({
 	if (!session?.user) {
 		redirect("/sign-in");
 	}
-
-	const userId = session.user.id as string;
-
 	return (
-		<SidebarProvider>
-			<AppSidebar>
-				<Suspense fallback={"loading"}>
-					<BoardLists />
-				</Suspense>
-			</AppSidebar>
-			<div className="w-full overflow-hidden min-h-full h-svh">
-				<Navbar userId={userId} />
-				{children}
-			</div>
-		</SidebarProvider>
+		<SessionProvider>
+			<SidebarProvider>
+				<AppSidebar>
+					<Suspense fallback={"loading"}>
+						<BoardLists />
+					</Suspense>
+				</AppSidebar>
+				<div className="w-full overflow-hidden min-h-full h-svh">
+					<Navbar />
+					{children}
+				</div>
+			</SidebarProvider>
+		</SessionProvider>
 	);
 }

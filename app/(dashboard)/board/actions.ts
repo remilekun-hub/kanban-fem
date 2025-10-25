@@ -1,23 +1,16 @@
 "use server";
 import { db } from "@/db/drizzle";
-import { boards, columns, tasks, users } from "@/db/schema";
+import { boards, columns, subtasks, tasks, users } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 
-export const getBoards = unstable_cache(
-	async (userId: string) => {
-		const data = await db
-			.select()
-			.from(boards)
-			.where(eq(boards.userId, userId));
-		return data;
-	},
-
-	["getBoards"],
-	{
-		tags: ["boards"],
-	}
-);
+export const getBoards = async (userId: string) => {
+	const data = await db
+		.select()
+		.from(boards)
+		.where(eq(boards.userId, userId)); // triggers a fresh fetch for the page
+	return data;
+};
 
 export const deleteBoard = async (userId: string, boardId: string) => {
 	// Validate input early
@@ -47,8 +40,7 @@ export const deleteBoard = async (userId: string, boardId: string) => {
 		.delete(boards)
 		.where(and(eq(boards.id, boardId), eq(boards.userId, userId)));
 
-	// Revalidate cache for all boards
-	revalidateTag("boards");
+	revalidatePath("/board");
 
 	return {
 		success: true,
@@ -71,7 +63,7 @@ export async function addBoard(userId: string, boardName: string) {
 			boardName: boardName,
 			userId: userId,
 		});
-		revalidateTag("boards");
+		revalidatePath("/board");
 
 		return {
 			success: true,
@@ -115,7 +107,7 @@ export async function addUserColumn(
 				.set({ boardName })
 				.where(eq(boards.id, boardId));
 			boardUpdated = true;
-			revalidateTag("boards");
+			revalidatePath(`/board/${boardId}`);
 		}
 
 		const existingColumns = await db
@@ -270,3 +262,119 @@ export async function getBoardById(userId: string, boardId: string) {
 // 		};
 // 	}
 // }
+
+export async function getColumns(boardId: string, userId: string) {
+	try {
+		if (!userId) {
+			return {
+				success: false,
+				message: "please log in to continue",
+			};
+		}
+		const boardColumns = await db
+			.select({
+				columnId: columns.id,
+				name: columns.name,
+			})
+			.from(columns)
+			.innerJoin(boards, eq(columns.boardId, boards.id))
+			.where(and(eq(boards.id, boardId), eq(boards.userId, userId)));
+
+		return boardColumns;
+	} catch (error) {
+		return {
+			success: false,
+			message: "failed to get columns",
+		};
+	}
+}
+
+export async function createTask(
+	taskName: string,
+	description: string,
+	columnId: string,
+	boardId: string,
+	userId: string,
+	subtasksList?: { title: string; completed: boolean }[]
+) {
+	try {
+		// Check column belongs to board & user
+		const columnCheck = await db
+			.select({
+				columnId: columns.id,
+				boardId: boards.id,
+			})
+			.from(columns)
+			.innerJoin(boards, eq(columns.boardId, boards.id))
+			.where(
+				and(
+					eq(columns.id, columnId),
+					eq(boards.id, boardId),
+					eq(boards.userId, userId)
+				)
+			)
+			.limit(1);
+
+		if (columnCheck.length === 0) {
+			return {
+				success: false,
+				message: "Unauthorized or invalid board/column.",
+			};
+		}
+
+		// Insert the task
+		const [newTask] = await db
+			.insert(tasks)
+			.values({ taskName, description, columnId })
+			.returning();
+
+		// Insert subtasks if any
+		type CreatedSubTaskType = {
+			id: string; // DB-generated
+			title: string;
+			completed: boolean;
+			taskId: string;
+		};
+		let createdSubtasks: CreatedSubTaskType[] = [];
+		if (subtasksList?.length) {
+			createdSubtasks = await db
+				.insert(subtasks)
+				.values(
+					subtasksList.map((st) => ({
+						title: st.title,
+						completed: st.completed,
+						taskId: newTask.id,
+					}))
+				)
+				.returning({
+					id: subtasks.id,
+					title: subtasks.title,
+					completed: subtasks.completed,
+					taskId: subtasks.taskId,
+				});
+		}
+
+		// Return the single task with its subtasks
+		return {
+			success: true,
+			message: "Task Created",
+			data: {
+				columnId,
+				task: {
+					id: newTask.id,
+					taskName: newTask.taskName,
+					description: newTask.description,
+					columnId: newTask.columnId,
+					subtasks: createdSubtasks.map((st) => ({
+						id: st.id,
+						title: st.title,
+						completed: st.completed,
+					})),
+				},
+			},
+		};
+	} catch (error) {
+		console.error(error);
+		return { success: false, message: "Failed to create task: " + error };
+	}
+}

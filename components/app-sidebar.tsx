@@ -10,7 +10,7 @@ import {
 import Image from "next/image";
 import Footer from "./footer";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import Createboard from "./create-board";
+
 
 export function AppSidebar({
 	children,
@@ -34,7 +34,7 @@ export function AppSidebar({
 			</SidebarHeader>
 			<SidebarContent>
 				{children}
-				{/* <Createboard /> */}
+		
 			</SidebarContent>
 
 			<Footer />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useTransition, useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon, XIcon } from "lucide-react";
 import {
@@ -21,8 +21,19 @@ import {
 import { Input } from "./ui/input";
 import z from "zod";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { RootState } from "@/lib/features/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
+import { addTask } from "@/lib/features/boardSlice";
+import { createTask } from "@/app/(dashboard)/board/actions";
+import { SubTaskType } from "@/app/types";
+import { v4 as uuidv4 } from "uuid";
 
 export default function AddTask() {
+	const dispatch = useDispatch();
+	const board = useSelector((state: RootState) => state.board);
+	const [isPending, startTransition] = useTransition();
 	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof addTaskSchema>>({
 		resolver: zodResolver(addTaskSchema),
@@ -34,23 +45,60 @@ export default function AddTask() {
 					completed: false,
 					title: "",
 				},
-				{
-					completed: false,
-					title: "",
-				},
 			],
+			columnId: "",
 		},
-		mode: "onBlur",
+		mode: "onChange",
 	});
+	const { data: session } = useSession();
+	const userId = session?.user?.id;
 
+	const boardId = board.id;
 	const { fields, append, remove } = useFieldArray({
 		control: form.control,
 		name: "subtasks",
 	});
 
 	const onSubmit = (data: z.infer<typeof addTaskSchema>) => {
-		alert("submitted");
-		console.log({ data });
+		if (!userId) {
+			return toast.error("Error", {
+				description: "Please sign in to continue",
+			});
+		}
+		const taskName = data.name;
+		const desc = data.description;
+		const subTasks = data.subtasks;
+		const colId = data.columnId;
+		startTransition(async () => {
+			const result = await createTask(
+				taskName,
+				desc,
+				colId,
+				boardId,
+				userId,
+				subTasks
+			);
+			if (!result.success) {
+				toast.error("Error", { description: result.message });
+			} else {
+				dispatch(
+					addTask({
+						columnId: colId,
+						task: {
+							id: result.data?.columnId as string,
+							taskName: result.data?.task.taskName as string,
+							description: result.data?.task
+								.description as string,
+							subtasks: result.data?.task
+								.subtasks as SubTaskType[],
+						},
+					})
+				);
+				toast.success("Success", { description: result.message });
+				form.reset();
+				setOpen(false);
+			}
+		});
 	};
 	return (
 		<div>
@@ -167,29 +215,57 @@ export default function AddTask() {
 								<Button
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 									type="button"
+									disabled={isPending}
 									onClick={() =>
-										append({ completed: false, title: "" }, { shouldFocus: false })
+										append(
+											{
+												completed: false,
+												title: "",
+											},
+											{ shouldFocus: false }
+										)
 									}
 								>
 									+ Add New SubTask
 								</Button>
 
 								<div>
-									<FormLabel className="font-[700] text-[12px] text-muted dark:text-white">
-										Current Status
-									</FormLabel>
-									<select
-										name=""
-										id=""
-										className="mt-4 px-2 !text-[13px] w-full text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
-									>
-										<option value="one">one</option>
-										<option value="two">two</option>
-									</select>
+									<FormField
+										control={form.control}
+										name={"columnId"}
+										render={({ field }) => (
+											<FormItem className="mb-7">
+												<FormLabel className="font-[700] text-[12px] text-muted dark:text-white">
+													Current Status
+												</FormLabel>
+												<FormControl>
+													<select
+														id=""
+														className="mt-4 px-2 !text-[13px] w-full text-[rgba(130, 143, 163, .25)] dark:caret-white caret-black text-black dark:text-white bg-white dark:bg-[#2B2C37] focus-visible:ring-0 flex-1 h-[40px] rounded-[4px] text-[13px] font-[500] border-muted/20 border-1 ring-0 outline-none ring-offset-0 focus-within:!border-primary"
+														{...field}
+													>
+														{board.columns.map(
+															(c) => (
+																<option
+																	key={c.id}
+																	value={c.id}
+																>
+																	{c.name}
+																</option>
+															)
+														)}
+													</select>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
 								</div>
 								<Button
 									className="font-[700] h-[42px] text-[13px] cursor-pointer"
 									type="submit"
+									isLoading={isPending}
+									disabled={isPending}
 								>
 									Create Task
 								</Button>
