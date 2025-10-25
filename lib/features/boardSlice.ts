@@ -89,7 +89,7 @@ export const boardSlice = createSlice({
 				}
 			}
 		},
-		deleteBoard: (state) => {
+		removeBoard: (state) => {
 			state = {
 				boardName: "",
 				columns: [],
@@ -126,6 +126,7 @@ export const {
 	moveTask,
 	deleteTask,
 	updateSubtask,
+	removeBoard
 } = boardSlice.actions;
 
 export default boardSlice.reducer;

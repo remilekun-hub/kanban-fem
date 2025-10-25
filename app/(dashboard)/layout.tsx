@@ -22,6 +22,8 @@ export default async function RootLayout({
 		redirect("/sign-in");
 	}
 
+	const userId = session.user.id as string;
+
 	return (
 		<SidebarProvider>
 			<AppSidebar>
@@ -30,7 +32,7 @@ export default async function RootLayout({
 				</Suspense>
 			</AppSidebar>
 			<div className="w-full overflow-hidden min-h-full h-svh">
-				<Navbar />
+				<Navbar userId={userId} />
 				{children}
 			</div>
 		</SidebarProvider>

@@ -24,7 +24,7 @@ export default function Board({ boardId, userId, board }: MainBoardType) {
 	const dispatch = useDispatch();
 	useEffect(() => {
 		dispatch(createBoard(board));
-	}, []);
+	}, [boardId]);
 
 	const boardState = useSelector((state: RootState) => state.board);
 	const sensors = useSensors(

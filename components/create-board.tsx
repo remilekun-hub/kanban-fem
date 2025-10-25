@@ -1,7 +1,7 @@
 "use client";
 import { addColumnSchema, createBoardSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { startTransition, useState } from "react";
+import React, { useState, useTransition } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "./ui/button";
@@ -24,6 +24,7 @@ import { addBoard } from "@/app/(dashboard)/board/actions";
 import { toast } from "sonner";
 
 export default function Createboard({ userId }: { userId: string }) {
+	const [isPending, startTransition] = useTransition();
 	const dispatch = useDispatch();
 	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof createBoardSchema>>({
@@ -69,7 +70,7 @@ export default function Createboard({ userId }: { userId: string }) {
 				toast.success("Success", {
 					description: result.message,
 				});
-				setOpen(false);
+				form.reset()
 			} else {
 				toast.error("Error", {
 					description: result.error,
@@ -161,6 +162,7 @@ export default function Createboard({ userId }: { userId: string }) {
 							</div>
 							<div className="flex flex-col gap-4 mt-5">
 								<Button
+									disabled={isPending}
 									className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 									type="button"
 									onClick={() =>
@@ -172,6 +174,8 @@ export default function Createboard({ userId }: { userId: string }) {
 								<Button
 									className="font-[700] h-[42px] text-[13px] cursor-pointer"
 									type="submit"
+									disabled={isPending}
+									isLoading={isPending}
 								>
 									Create New Board
 								</Button>

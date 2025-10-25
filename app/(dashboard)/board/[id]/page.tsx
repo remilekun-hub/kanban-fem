@@ -52,15 +52,15 @@ export default async function SingleBoard({ params }: Props) {
 	// .map(row => row.column)
 	// .filter(col => col !== null); // in case there are no columns yet
 
-	const boardData = result[0].board;
+	const boardData = result[0]?.board;
 	const boardColumns = result
 		.map((row) => row.column)
 		.filter((col) => col !== null);
 
 	const board: BoardType = {
-		id: boardData.id,
-		boardName: boardData.boardName,
-		columns: boardColumns as ColumnType[],
+		id: boardData?.id ?? '',
+		boardName: boardData?.boardName ?? '',
+		columns: boardColumns as ColumnType[] ?? [],
 	};
 	
 	return (

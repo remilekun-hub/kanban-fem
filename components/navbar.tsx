@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import { MoreVertical, XIcon } from "lucide-react";
 import { useSidebar } from "./ui/sidebar";
@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import z from "zod";
 import { RootState } from "@/lib/features/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
 	Dialog,
 	DialogContent,
@@ -40,12 +40,20 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import AddTask from "./add-task";
+import { deleteBoard } from "@/app/(dashboard)/board/actions";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
+import { removeBoard } from "@/lib/features/boardSlice";
+import { useRouter } from "next/navigation";
 
-export default function Navbar() {
+export default function Navbar({ userId }: { userId: string }) {
+	const router = useRouter();
 	const { open } = useSidebar();
+	const [isPending, startTransition] = useTransition();
 	const [confirmDelete, setConfirmDelete] = useState(false);
 	const board = useSelector((state: RootState) => state.board);
 	const [editBoard, setEditBoard] = useState(false);
+	const dispatch = useDispatch();
 	const form = useForm<z.infer<typeof addColumnSchema>>({
 		resolver: zodResolver(addColumnSchema),
 		defaultValues: {
@@ -66,15 +74,30 @@ export default function Navbar() {
 	};
 
 	useEffect(() => {
-		if (Object.values(board)[0].length) {
+		if (board) {
 			form.reset({
 				boardName: board.boardName,
 				columnNames: [...board.columns],
 				id: board.id,
 			});
 		}
-	}, [form]);
+	}, [form, board]);
 
+	const handleDeleteBoard = () => {
+		const boardId = form.watch("id");
+		startTransition(async () => {
+			const result = await deleteBoard(userId, boardId);
+			if (!result.success) {
+				toast.error(result.message);
+			} else {
+				// router.push("/board")
+
+				dispatch(removeBoard());
+				setConfirmDelete(false);
+				window.location.href = "/board";
+			}
+		});
+	};
 	return (
 		<header className="w-full border-b h-[65px] md:h-[80px] bg-white dark:bg-sidebar flex !items-center !justify-between !px-4 lg:!px-5 sticky top-0">
 			{!open && (
@@ -135,15 +158,19 @@ export default function Navbar() {
 								Delete this board?
 							</AlertDialogTitle>
 							<AlertDialogDescription className="font-[500] text-[13px] leading-[23px] text-muted">
-								Are you sure you want to delete the "Roadmap"
-								board? This action will remove all columns and
-								tasks and cannot be reversed.
+								Are you sure you want to delete the "
+								{board.boardName}" board ?. This action will
+								remove all columns and tasks and cannot be
+								reversed.
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter className="w-full flex flex-col gap-4 items-stretch md:flex-row sm:justify-start mt-2 mb-2">
 							<Button
 								variant={"destructive"}
 								className="flex-1 bg-[#ea5555] cursor-pointer hover:bg-[#FF9898] font-[700] leading-[23px] h-[42px] text-[13px]"
+								isLoading={isPending}
+								disabled={isPending}
+								onClick={handleDeleteBoard}
 							>
 								Delete
 							</Button>
@@ -151,6 +178,7 @@ export default function Navbar() {
 								variant={"default"}
 								className="flex-1 h-[42px] cursor-pointer bg-[#635FC719] hover:bg-[#635fc740] dark:bg-white dark:hover:bg-white !text-primary font-[700] text-[13px]"
 								onClick={() => setConfirmDelete(false)}
+								disabled={isPending}
 							>
 								Cancel
 							</Button>
