@@ -18,7 +18,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { addColumnSchema } from "@/lib/schemas";
+import { addColumnSchema, addColumnToBoardSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import z from "zod";
@@ -52,8 +52,8 @@ export default function Navbar() {
 	const board = useSelector((state: RootState) => state.board);
 	const [editBoard, setEditBoard] = useState(false);
 	const dispatch = useDispatch();
-	const form = useForm<z.infer<typeof addColumnSchema>>({
-		resolver: zodResolver(addColumnSchema),
+	const form = useForm<z.infer<typeof addColumnToBoardSchema>>({
+		resolver: zodResolver(addColumnToBoardSchema),
 		defaultValues: {
 			boardName: "",
 			columnNames: [{ name: "", id: "" }],

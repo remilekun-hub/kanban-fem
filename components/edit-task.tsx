@@ -1,6 +1,11 @@
-import React, { useTransition, useState, useEffect } from "react";
+import React, {
+	useTransition,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+} from "react";
 import { Button } from "./ui/button";
-import { PlusIcon, XIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
 import {
 	Dialog,
 	DialogContent,
@@ -29,11 +34,20 @@ import { addTask } from "@/lib/features/boardSlice";
 import { createTask } from "@/app/(dashboard)/board/actions";
 import { SubTaskType } from "@/app/types";
 
-export default function AddTask() {
+export default function EditTask({
+	open,
+	setOpen,
+	taskId,
+	columnId,
+}: {
+	open: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
+	taskId: string;
+	columnId: string;
+}) {
 	const dispatch = useDispatch();
 	const board = useSelector((state: RootState) => state.board);
 	const [isPending, startTransition] = useTransition();
-	const [open, setOpen] = useState(false);
 	const form = useForm<z.infer<typeof addTaskSchema>>({
 		resolver: zodResolver(addTaskSchema),
 		defaultValues: {
@@ -99,24 +113,24 @@ export default function AddTask() {
 			}
 		});
 	};
+
+	useEffect(() => {
+		if (board) {
+			const taskColumn = board.columns.find((c) => c.id === columnId);
+			const task = taskColumn?.tasks?.find((t) => t.id === taskId);
+			if (task) {
+				form.reset({
+					name: task.taskName,
+					columnId: columnId,
+					description: task.description,
+					subtasks: task.subtasks,
+				});
+			}
+		}
+	}, [board, form]);
+
 	return (
 		<div>
-			<Button
-				variant={"default"}
-				className="flex md:hidden !px-4 mr-4 font-[700] text-[15px] leading-[19px] rounded-[24px] h-[30px] justify-center items-center cursor-pointer"
-				onClick={() => setOpen(true)}
-			>
-				<PlusIcon strokeWidth={4} />
-			</Button>
-
-			<Button
-				variant={"default"}
-				className="cursor-pointer hidden md:flex !px-6 !py-6 mr-4 font-[700] text-[15px] leading-[19px]"
-				onClick={() => setOpen(true)}
-			>
-				+ Add New Task
-			</Button>
-
 			<Dialog open={open} onOpenChange={setOpen}>
 				<DialogContent
 					className="bg-white dark:bg-[#2B2C37]"
@@ -124,7 +138,7 @@ export default function AddTask() {
 				>
 					<DialogHeader>
 						<DialogTitle className="text-black dark:text-white font-[700]">
-							Add New Task
+							Edit Task
 						</DialogTitle>
 					</DialogHeader>
 					<Form {...form}>
@@ -266,7 +280,7 @@ export default function AddTask() {
 									isLoading={isPending}
 									disabled={isPending}
 								>
-									Create Task
+									Save Changes
 								</Button>
 							</div>
 						</form>

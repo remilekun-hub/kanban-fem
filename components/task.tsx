@@ -32,6 +32,7 @@ import { deleteTaskDb } from "@/app/(dashboard)/board/actions";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { RootState } from "@/lib/features/store";
+import EditTask from "./edit-task";
 
 export default function Task({
 	taskName,
@@ -75,7 +76,7 @@ export default function Task({
 			}
 		});
 	};
-
+	const [openEditTask, setOpenEditTask] = useState(false);
 	return (
 		<div>
 			<div
@@ -120,7 +121,7 @@ export default function Task({
 								<DropdownMenuItem className="hover:!bg-none cursor-pointer py-2.5 focus:!bg-white">
 									<button
 										className="w-full text-start text-[13px] font-[500] text-muted cursor-pointer"
-										// onClick={() => setEditBoard(true)}
+										onClick={() => setOpenEditTask(true)}
 									>
 										Edit Task
 									</button>
@@ -267,6 +268,9 @@ export default function Task({
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
+
+
+			<EditTask open={openEditTask} setOpen={setOpenEditTask} taskId={id} columnId={columnId} />
 		</div>
 	);
 }
