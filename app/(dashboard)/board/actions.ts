@@ -1,7 +1,7 @@
 "use server";
 import { db } from "@/db/drizzle";
 import { boards, columns, subtasks, tasks, users } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
+import { ConsoleLogWriter, and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function getBoardWithColumnsAndTasks(
@@ -297,31 +297,12 @@ export async function deleteTaskDb(
 	taskId: string
 ) {
 	try {
-		const task = await db
-			.select({
-				id: tasks.id,
-				columnId: tasks.columnId,
-			})
-			.from(tasks)
-			.innerJoin(columns, eq(tasks.columnId, columnId))
-			.where(
-				and(
-					eq(tasks.id, taskId),
-					eq(columns.boardId, boardId),
-					eq(columns.userId, userId)
-				)
-			)
-			.limit(1);
-
-		if (!task || task.length === 0) {
-			return {
-				success: false,
-				error: "Task not found.",
-			};
+		const deleted = await db
+			.delete(tasks)
+			.where(and(eq(tasks.id, taskId), eq(tasks.columnId, columnId)));
+		if (!deleted) {
+			return { success: false, message: "Task not found." };
 		}
-
-	
-		await db.delete(tasks).where(and(eq(tasks.id, taskId)));
 
 		return {
 			success: true,
@@ -330,7 +311,7 @@ export async function deleteTaskDb(
 	} catch (error) {
 		return {
 			success: false,
-			error: "Failed to delete task.",
+			message: "Failed to delete task.",
 		};
 	}
 }

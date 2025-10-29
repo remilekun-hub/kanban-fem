@@ -2,7 +2,7 @@ import { addColumnSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import z from "zod";
+import z, { uuidv4 } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { XIcon } from "lucide-react";
@@ -96,7 +96,7 @@ export default function AddColForm() {
 						<Button
 							className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 							type="button"
-							onClick={() => append({ name: "",  })}
+							onClick={() => append({ name: "",})}
 						>
 							+ Add New Column
 						</Button>

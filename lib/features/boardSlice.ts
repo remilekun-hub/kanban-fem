@@ -47,6 +47,12 @@ export const boardSlice = createSlice({
 			state.boardName = boardName;
 			state.columns = [...columns];
 		},
+		removeColumn: (state, action: PayloadAction<{ columnId: string }>) => {
+			const { columnId } = action.payload;
+		
+		
+			state.columns = state.columns.filter((col) => col.id !== columnId);
+		},
 		addTask: (state, action: PayloadAction<addTaskPayloadType>) => {
 			const { columnId, task } = action.payload;
 		
@@ -153,6 +159,7 @@ export const boardSlice = createSlice({
 export const {
 	createBoard,
 	createColumn,
+	removeColumn,
 	incrementByAmount,
 	addTask,
 	moveTask,

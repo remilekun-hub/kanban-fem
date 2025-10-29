@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import { useForm, useFieldArray } from "react-hook-form";
-import { addColumnSchema } from "@/lib/schemas";
+import { addColumnSchema, addColumnToBoardSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -28,7 +28,7 @@ import {
 	deleteUserColumn,
 } from "@/app/(dashboard)/board/actions";
 import { toast } from "sonner";
-import { createColumn } from "@/lib/features/boardSlice";
+import { createColumn, removeColumn } from "@/lib/features/boardSlice";
 import { v4 as uuidv4 } from "uuid";
 
 export default function AddColumn({
@@ -42,8 +42,8 @@ export default function AddColumn({
 	const [isPending, startTransition] = useTransition();
 	const [open, setOpen] = useState(false);
 	const board = useSelector((state: RootState) => state.board);
-	const form = useForm<z.infer<typeof addColumnSchema>>({
-		resolver: zodResolver(addColumnSchema),
+	const form = useForm<z.infer<typeof addColumnToBoardSchema>>({
+		resolver: zodResolver(addColumnToBoardSchema),
 		defaultValues: {
 			boardName: "",
 			columnNames: [{ name: "", id: "" }],
@@ -187,6 +187,7 @@ export default function AddColumn({
 																		if (
 																			result?.success
 																		) {
+																			dispatch(removeColumn({columnId}))
 																			toast.success(
 																				"Success",
 																				{
