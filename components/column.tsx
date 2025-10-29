@@ -12,7 +12,7 @@ export default function Column({ id, name, tasks }: ColumnType) {
 		color: isOver ? "green" : undefined,
 	};
 	return (
-		<div ref={setNodeRef} style={style} className="min-w-[280px] shrink-0 overflow-y-scroll h-[100vh]">
+		<div ref={setNodeRef} style={style} className="min-w-[280px] shrink-0">
 			<div className="mb-4">
 				<h2 className="text-muted mb uppercase text-[12px] font-[700] tracking-[2px]">
 					{name} ({tasks?.length ?? 0})
@@ -20,7 +20,7 @@ export default function Column({ id, name, tasks }: ColumnType) {
 			</div>
 			<div className="flex flex-col gap-4">
 				{tasks?.map((task, index) => (
-					<Task key={index} {...task} />
+					<Task key={index} columnId={id} {...task} />
 				))}
 			</div>
 		</div>

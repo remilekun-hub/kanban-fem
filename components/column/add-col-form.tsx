@@ -96,7 +96,7 @@ export default function AddColForm() {
 						<Button
 							className="font-[700] h-[42px] text-[13px] dark:bg-white dark:text-primary cursor-pointer mb-2"
 							type="button"
-							onClick={() => append({ name: "" })}
+							onClick={() => append({ name: "",  })}
 						>
 							+ Add New Column
 						</Button>

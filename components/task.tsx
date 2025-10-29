@@ -18,25 +18,28 @@ import { MoreVertical } from "lucide-react";
 import Subtasksitem from "./subtasksitem";
 import {
 	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-	AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteTask } from "@/lib/features/boardSlice";
+import { useTransition } from "react";
+import { deleteTaskDb } from "@/app/(dashboard)/board/actions";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { RootState } from "@/lib/features/store";
 
 export default function Task({
 	taskName,
 	description,
 	id,
 	subtasks,
-}: TaskType) {
+	columnId,
+}: TaskType & { columnId: string }) {
 	const [openSubTasks, setOpenSubTasks] = useState(false);
 	const { attributes, listeners, setNodeRef, transform } = useDraggable({
 		id: id,
@@ -50,7 +53,28 @@ export default function Task({
 	const totalSubTasks = subtasks?.length;
 	const completedSubTasks = subtasks?.filter((s) => s.completed === true);
 	const [confirmDelete, setConfirmDelete] = useState(false);
-	const dispatch = useDispatch()
+	const dispatch = useDispatch();
+	const session = useSession();
+	const userId = session.data?.user?.id as string;
+	const [isPending, startTransition] = useTransition();
+	const board = useSelector((state: RootState) => state.board);
+
+	const handleDeleteTask = (id: string) => {
+		if (!userId) {
+			toast.error("Unauthorized");
+			return;
+		}
+		startTransition(async () => {
+			const result = await deleteTaskDb(userId, board.id, columnId, id);
+			if (!result.success) {
+				toast.error("Error", { description: result.message });
+			} else {
+				toast.success("Success", { description: result.message });
+				dispatch(deleteTask({ id }));
+				setConfirmDelete(false)
+			}
+		});
+	};
 
 	return (
 		<div>
@@ -215,7 +239,7 @@ export default function Task({
 				<AlertDialogContent className="bg-white dark:bg-background">
 					<AlertDialogHeader>
 						<AlertDialogTitle className="text-[#ea5555] font-[700] text-[18px] mb-4">
-							Delete this board?
+							Delete this Task?
 						</AlertDialogTitle>
 						<AlertDialogDescription className="font-[500] text-[13px] leading-[23px] text-muted">
 							Are you sure you want to delete the "{taskName}"
@@ -227,7 +251,9 @@ export default function Task({
 						<Button
 							variant={"destructive"}
 							className="flex-1 bg-[#ea5555] cursor-pointer hover:bg-[#FF9898] text-[13px] font-[700] leading-[23px] h-[42px] text-[13px]"
-							onClick={()=> dispatch(deleteTask({id}))}
+							isLoading={isPending}
+							disabled={isPending}
+							onClick={() => handleDeleteTask(id)}
 						>
 							Delete
 						</Button>

@@ -16,7 +16,7 @@ export const addColumnSchema = z.object({
 	columnNames: z.array(
 		z.object({
 			name: z.string().min(1, "required"),
-			id: z.uuid(),
+			// id: z.uuid(),
 		})
 	),
 	id: z.string().min(1, "required"),

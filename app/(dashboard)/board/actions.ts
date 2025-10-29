@@ -54,12 +54,12 @@ export async function getBoardWithColumnsAndTasks(
 		};
 
 	return {
-		success:true,
-		message:'Board fetched successffully',
-		data:{
+		success: true,
+		message: "Board fetched successffully",
+		data: {
 			...boardData[0],
-		columns: columnsWithTasks,
-		}
+			columns: columnsWithTasks,
+		},
 	};
 }
 
@@ -286,6 +286,51 @@ export async function getBoardById(userId: string, boardId: string) {
 		return {
 			success: false,
 			error: "Failed to get board",
+		};
+	}
+}
+
+export async function deleteTaskDb(
+	userId: string,
+	boardId: string,
+	columnId: string,
+	taskId: string
+) {
+	try {
+		const task = await db
+			.select({
+				id: tasks.id,
+				columnId: tasks.columnId,
+			})
+			.from(tasks)
+			.innerJoin(columns, eq(tasks.columnId, columnId))
+			.where(
+				and(
+					eq(tasks.id, taskId),
+					eq(columns.boardId, boardId),
+					eq(columns.userId, userId)
+				)
+			)
+			.limit(1);
+
+		if (!task || task.length === 0) {
+			return {
+				success: false,
+				error: "Task not found.",
+			};
+		}
+
+	
+		await db.delete(tasks).where(and(eq(tasks.id, taskId)));
+
+		return {
+			success: true,
+			message: "Task deleted successfully.",
+		};
+	} catch (error) {
+		return {
+			success: false,
+			error: "Failed to delete task.",
 		};
 	}
 }
