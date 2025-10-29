@@ -72,7 +72,7 @@ export default function Task({
 			} else {
 				toast.success("Success", { description: result.message });
 				dispatch(deleteTask({ id }));
-				setConfirmDelete(false)
+				setConfirmDelete(false);
 			}
 		});
 	};
@@ -145,7 +145,10 @@ export default function Task({
 					</p>
 
 					<p className="text-muted text-[12px] font-[700] leading-[15px] tracking-[2.4px]">
-						Subtasks ({completedSubTasks?.length} of {totalSubTasks}{" "}
+						Subtasks (
+						{totalSubTasks > 0
+							? `${completedSubTasks?.length} of ${totalSubTasks}`
+							: "0"}
 						)
 					</p>
 
@@ -269,8 +272,12 @@ export default function Task({
 				</AlertDialogContent>
 			</AlertDialog>
 
-
-			<EditTask open={openEditTask} setOpen={setOpenEditTask} taskId={id} columnId={columnId} />
+			<EditTask
+				open={openEditTask}
+				setOpen={setOpenEditTask}
+				taskId={id}
+				columnId={columnId}
+			/>
 		</div>
 	);
 }

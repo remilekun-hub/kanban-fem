@@ -12,7 +12,7 @@ import BoardLists from "./board/_components/boardlists";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
-import { getColumns } from "./board/actions";
+import BoardListsSkeleton from "./board/_components/boardlistsSkeleton";
 
 export default async function RootLayout({
 	children,
@@ -27,7 +27,7 @@ export default async function RootLayout({
 		<SessionProvider>
 			<SidebarProvider>
 				<AppSidebar>
-					<Suspense fallback={"loading"}>
+					<Suspense fallback={<BoardListsSkeleton />}>
 						<BoardLists />
 					</Suspense>
 				</AppSidebar>
